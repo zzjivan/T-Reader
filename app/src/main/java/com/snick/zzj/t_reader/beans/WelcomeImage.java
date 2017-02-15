@@ -1,4 +1,4 @@
-package com.snick.zzj.t_reader.model.beans;
+package com.snick.zzj.t_reader.beans;
 
 /**
  * Created by zzj on 17-1-24.
