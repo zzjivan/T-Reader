@@ -38,7 +38,7 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        showWelcomeImage();
+        //showWelcomeImage();
         Handler handler = new Handler();
         handler.postDelayed(new Runnable(){
 
@@ -49,7 +49,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
-        }, 5000);
+        }, 1000);
 
     }
 
@@ -101,9 +101,13 @@ public class WelcomeActivity extends AppCompatActivity {
                         linearLayout.setBackground(new BitmapDrawable(arg0));
                     }
                 });
-
     }
 
+    @Override
+    protected void onDestroy() {
+
+        super.onDestroy();
+    }
 
     private interface RequestServices {
         @GET("{resolution}")

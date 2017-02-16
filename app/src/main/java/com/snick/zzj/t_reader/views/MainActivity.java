@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, new BaseFragment(), "1111").commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.content, new BaseFragment(), "base").commit();
     }
 
     @Override

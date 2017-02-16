@@ -9,7 +9,7 @@ import java.util.List;
 public class DailyNews {
     private String date;
     private List<Story> stories;
-    private Story top_stories;
+    private List<TopStory> top_stories;
 
     public String getDate() {
         return date;
@@ -27,11 +27,11 @@ public class DailyNews {
         this.stories = stories;
     }
 
-    public Story getTop_stories() {
+    public List<TopStory> getTop_stories() {
         return top_stories;
     }
 
-    public void setTop_stories(Story top_stories) {
+    public void setTop_stories(List<TopStory> top_stories) {
         this.top_stories = top_stories;
     }
 }

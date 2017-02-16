@@ -1,6 +1,9 @@
 package com.snick.zzj.t_reader.views.fragment;
 
 import android.graphics.drawable.Drawable;
+import android.widget.ImageView;
+
+import com.snick.zzj.t_reader.beans.DailyNews;
 
 /**
  * Created by zzj on 17-2-6.
@@ -8,5 +11,5 @@ import android.graphics.drawable.Drawable;
 
 public interface BaseView {
 
-    void setImages(Drawable drawable);
+    void refreshViews(DailyNews dailyNews);
 }
