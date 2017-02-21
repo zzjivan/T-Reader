@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="240dp"
-    android:id="@+id/vp_top_news">
+    android:id="@+id/top_container">
 
-    <!--ImageView
-        android:id="@+id/iv_top_news_img"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp_top_news"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="fitXY"/-->
+        android:layout_height="match_parent"/>
 
-</android.support.v4.view.ViewPager>
+    <me.relex.circleindicator.CircleIndicator
+        android:id="@+id/viewpager_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="18dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="6dp"/>
+
+</RelativeLayout>

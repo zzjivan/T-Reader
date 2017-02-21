@@ -2,6 +2,7 @@ package com.snick.zzj.t_reader.views.fragment;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,8 +15,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.snick.zzj.t_reader.R;
@@ -25,8 +28,12 @@ import com.snick.zzj.t_reader.presenter.impl.BasePresenterImpl;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import me.relex.circleindicator.CircleIndicator;
 
 
 /**
@@ -114,15 +121,32 @@ public class BaseFragment extends Fragment implements BaseView{
                 firstNewsViewHolder.title.setText(dailyNews.getStories().get(position).getTitle());
                 Picasso.with(context).load(dailyNews.getStories().get(position).getImages().get(0)).into(firstNewsViewHolder.imageView);
             } else if(holder instanceof TopNewsViewHolder) {
-                TopNewsViewHolder topNewsViewHolder = (TopNewsViewHolder) holder;
+                final TopNewsViewHolder topNewsViewHolder = (TopNewsViewHolder) holder;
                 if(topNewsPagerAdaper == null) {
                     topNewsPagerAdaper = new TopNewsPagerAdaper(context, dailyNews);
                     topNewsViewHolder.viewPager_top_news.setAdapter(topNewsPagerAdaper);
+                    topNewsViewHolder.viewPager_top_news.setCurrentItem(0);
+                    topNewsViewHolder.viewPager_top_news.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                        @Override
+                        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                        }
+
+                        @Override
+                        public void onPageSelected(int position) {
+                            topNewsViewHolder.viewPager_top_news.setCurrentItem(position);
+                        }
+
+                        @Override
+                        public void onPageScrollStateChanged(int state) {
+
+                        }
+                    });
+                    topNewsViewHolder.viewpager_indicator.setViewPager(topNewsViewHolder.viewPager_top_news);
+                    topNewsPagerAdaper.registerDataSetObserver(topNewsViewHolder.viewpager_indicator.getDataSetObserver());
                 } else {
                     topNewsPagerAdaper.setData(dailyNews);
                     topNewsPagerAdaper.notifyDataSetChanged();
                 }
-               // Picasso.with(context).load(dailyNews.getTop_stories().get(position).getImage()).into(topNewsViewHolder.img);
             }
         }
 
@@ -143,12 +167,12 @@ public class BaseFragment extends Fragment implements BaseView{
         }
 
         class TopNewsViewHolder extends RecyclerView.ViewHolder {
-            //private ImageView img;
             private ViewPager viewPager_top_news;
+            private CircleIndicator viewpager_indicator;
             public TopNewsViewHolder(View itemView) {
                 super(itemView);
-                //img = (ImageView) itemView.findViewById(R.id.iv_top_news_img);
                 viewPager_top_news = (ViewPager) itemView.findViewById(R.id.vp_top_news);
+                viewpager_indicator = (CircleIndicator) itemView.findViewById(R.id.viewpager_indicator);
             }
         }
 
@@ -194,7 +218,7 @@ public class BaseFragment extends Fragment implements BaseView{
     class TopNewsPagerAdaper extends PagerAdapter {
         private Context context;
         private DailyNews dailyNews;
-        private List<ImageView> imageViewList = new ArrayList<ImageView>();
+        private List<View> itemList = new ArrayList<>();
 
         public TopNewsPagerAdaper(Context context, DailyNews dailyNews) {
             this.context = context;
@@ -213,18 +237,23 @@ public class BaseFragment extends Fragment implements BaseView{
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            if(imageViewList.size() <= position) {
-                ImageView imageView = new ImageView(context);
-                imageViewList.add(imageView);
+            if(itemList.size() <= position) {
+                View item = LayoutInflater.from(context).inflate(R.layout.top_news_item, null);
+                itemList.add(item);
             }
-            ((ViewPager)container).addView(imageViewList.get(position));
-            Picasso.with(context).load(dailyNews.getTop_stories().get(position).getImage()).into(imageViewList.get(position));
-            return imageViewList.get(position);
+            container.addView(itemList.get(position));
+            Picasso.with(context).load(dailyNews.getTop_stories().get(position).getImage()).into(
+                    (ImageView) itemList.get(position).findViewById(R.id.im_top_news_item_img));
+            ((TextView) itemList.get(position).findViewById(R.id.tv_top_news_title)).setText(
+                    dailyNews.getTop_stories().get(position).getTitle());
+            return itemList.get(position);
+
+
         }
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
-            ((ViewPager)container).removeView(imageViewList.get(position));
+            container.removeView(itemList.get(position));
         }
 
         public void setData(DailyNews dailyNews) {

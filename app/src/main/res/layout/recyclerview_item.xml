@@ -27,7 +27,9 @@
             android:maxHeight="100dp"
             android:layout_weight="1"
             android:gravity="left|center_vertical"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"/>
 
         <ImageView
             android:id="@+id/base_swipe_item_icon"
