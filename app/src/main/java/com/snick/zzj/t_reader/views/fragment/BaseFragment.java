@@ -1,9 +1,6 @@
 package com.snick.zzj.t_reader.views.fragment;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,10 +12,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.snick.zzj.t_reader.R;
@@ -26,10 +21,6 @@ import com.snick.zzj.t_reader.beans.DailyNews;
 import com.snick.zzj.t_reader.presenter.BasePresenter;
 import com.snick.zzj.t_reader.presenter.impl.BasePresenterImpl;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
-
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +31,7 @@ import me.relex.circleindicator.CircleIndicator;
  * Created by zzj on 17-2-6.
  */
 
-public class BaseFragment extends Fragment implements BaseView{
+public class BaseFragment extends Fragment implements BaseView, View.OnClickListener{
 
     private BasePresenter basePresenter;
 
@@ -75,6 +66,12 @@ public class BaseFragment extends Fragment implements BaseView{
             listAdapter.refresh(dailyNews);
             listAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        //TODO jump to WebView
+        basePresenter.handleNewsClick((String)v.getTag());
     }
 
     class ContentListAdapter extends RecyclerView.Adapter {
@@ -113,10 +110,12 @@ public class BaseFragment extends Fragment implements BaseView{
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             if(holder instanceof NormalViewHolder) {
                 NormalViewHolder normalViewHolder = (NormalViewHolder) holder;
+                normalViewHolder.linearLayout.setTag(dailyNews.getStories().get(position).getId());
                 normalViewHolder.textView.setText(dailyNews.getStories().get(position).getTitle());
                 Picasso.with(context).load(dailyNews.getStories().get(position).getImages().get(0)).into(normalViewHolder.imageView);
             } else if(holder instanceof FirstNewsViewHolder) {
                 FirstNewsViewHolder firstNewsViewHolder = (FirstNewsViewHolder) holder;
+                firstNewsViewHolder.linearLayout.setTag(dailyNews.getStories().get(position).getId());
                 firstNewsViewHolder.date.setText(dailyNews.getDate());
                 firstNewsViewHolder.title.setText(dailyNews.getStories().get(position).getTitle());
                 Picasso.with(context).load(dailyNews.getStories().get(position).getImages().get(0)).into(firstNewsViewHolder.imageView);
@@ -187,12 +186,7 @@ public class BaseFragment extends Fragment implements BaseView{
                 linearLayout = (LinearLayout) itemView.findViewById(R.id.base_swipe_item_container);
                 title = (TextView) itemView.findViewById(R.id.base_swipe_item_title);
                 imageView = (ImageView) itemView.findViewById(R.id.base_swipe_item_icon);
-                linearLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                    }
-                });
+                linearLayout.setOnClickListener(BaseFragment.this);
             }
         }
 
@@ -205,12 +199,7 @@ public class BaseFragment extends Fragment implements BaseView{
                 linearLayout = (LinearLayout) itemView.findViewById(R.id.base_swipe_item_container);
                 textView = (TextView) itemView.findViewById(R.id.base_swipe_item_title);
                 imageView = (ImageView) itemView.findViewById(R.id.base_swipe_item_icon);
-                linearLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                    }
-                });
+                linearLayout.setOnClickListener(BaseFragment.this);
             }
         }
     }
@@ -240,6 +229,8 @@ public class BaseFragment extends Fragment implements BaseView{
             if(itemList.size() <= position) {
                 View item = LayoutInflater.from(context).inflate(R.layout.top_news_item, null);
                 itemList.add(item);
+                item.setTag(dailyNews.getTop_stories().get(position).getId());
+                item.setOnClickListener(BaseFragment.this);
             }
             container.addView(itemList.get(position));
             Picasso.with(context).load(dailyNews.getTop_stories().get(position).getImage()).into(

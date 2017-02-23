@@ -17,6 +17,10 @@ import rx.Observer;
 
 public class BasePresenterImpl implements BasePresenter {
 
+    private final boolean DEBUG = true;
+
+    private final String TAG = "BasePresenterImpl";
+
     private Context context;
     private BaseModel baseModel;
     private BaseView baseView;
@@ -42,8 +46,27 @@ public class BasePresenterImpl implements BasePresenter {
 
             @Override
             public void onNext(DailyNews dailyNews) {
-                DailyNews news = dailyNews;
                 baseView.refreshViews(dailyNews);
+
+            }
+        });
+    }
+
+    @Override
+    public void handleNewsClick(String newsId) {
+        baseModel.getNewsContent(newsId, new Observer<DailyNews>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(DailyNews dailyNews) {
 
             }
         });

@@ -1,6 +1,7 @@
 package com.snick.zzj.t_reader.model;
 
 import com.snick.zzj.t_reader.beans.DailyNews;
+import com.snick.zzj.t_reader.beans.NewsContent;
 
 import rx.Observer;
 
@@ -11,4 +12,8 @@ import rx.Observer;
 public interface BaseModel {
 
     void refreshViews(Observer<DailyNews> observer);
+
+    void getOldNews(String date, Observer<DailyNews> observer);
+
+    void getNewsContent(String newsId, Observer<DailyNews> observer);
 }
