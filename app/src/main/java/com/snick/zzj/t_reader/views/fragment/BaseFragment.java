@@ -1,6 +1,7 @@
 package com.snick.zzj.t_reader.views.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,8 @@ import com.snick.zzj.t_reader.R;
 import com.snick.zzj.t_reader.beans.DailyNews;
 import com.snick.zzj.t_reader.presenter.BasePresenter;
 import com.snick.zzj.t_reader.presenter.impl.BasePresenterImpl;
+import com.snick.zzj.t_reader.utils.SourceUrl;
+import com.snick.zzj.t_reader.views.NewsContentActivity;
 import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,8 +73,9 @@ public class BaseFragment extends Fragment implements BaseView, View.OnClickList
 
     @Override
     public void onClick(View v) {
-        //TODO jump to WebView
-        basePresenter.handleNewsClick((String)v.getTag());
+        Intent intent = new Intent(getActivity(), NewsContentActivity.class);
+        intent.putExtra(SourceUrl.NEWS_ID, String.valueOf(v.getTag()));
+        getActivity().startActivity(intent);
     }
 
     class ContentListAdapter extends RecyclerView.Adapter {
