@@ -29,7 +29,8 @@
 
         <activity android:name=".views.MainActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".views.NewsContentActivity"/>
+        <activity android:name=".views.NewsContentActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>
