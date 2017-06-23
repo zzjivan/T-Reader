@@ -6,6 +6,7 @@ package com.snick.zzj.t_reader.utils;
 
 public class SourceUrl {
     public static final String NEWS_ID = "news_id";
+    public static final String NEWS_HEADER_IMG_ID = "1000";
 
     public static final String welcomeImage = "http://news-at.zhihu.com/api/4/start-image/";
     public static final String version = "http://news-at.zhihu.com/api/4/version/android/2.3.0/";

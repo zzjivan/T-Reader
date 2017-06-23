@@ -6,4 +6,9 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="top_news_header_height">240dp</dimen>
+
+    <dimen name="toolbar_height">60dp</dimen>
+    <dimen name="news_header_height">200dp</dimen>
 </resources>

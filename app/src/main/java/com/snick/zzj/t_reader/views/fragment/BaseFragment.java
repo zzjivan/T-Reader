@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -34,7 +35,10 @@ import me.relex.circleindicator.CircleIndicator;
  * Created by zzj on 17-2-6.
  */
 
-public class BaseFragment extends Fragment implements BaseView, View.OnClickListener{
+public class BaseFragment extends Fragment implements BaseView {
+
+    private static final int TAG_HEADER_IMG = 1000;
+    private static final int TAG_NEWS_ID = 1001;
 
     private BasePresenter basePresenter;
 
@@ -42,12 +46,13 @@ public class BaseFragment extends Fragment implements BaseView, View.OnClickList
 
     ContentListAdapter listAdapter;
 
-    public BaseFragment(){}
+    public BaseFragment() {
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        basePresenter = new BasePresenterImpl(getActivity(),this);
+        basePresenter = new BasePresenterImpl(getActivity(), this);
         basePresenter.refreshViews();
     }
 
@@ -61,7 +66,7 @@ public class BaseFragment extends Fragment implements BaseView, View.OnClickList
 
     @Override
     public void refreshViews(DailyNews dailyNews) {
-        if(listAdapter == null) {
+        if (listAdapter == null) {
             listAdapter = new ContentListAdapter(getActivity(), dailyNews);
             listView.setLayoutManager(new LinearLayoutManager(this.getContext()));
             listView.setAdapter(listAdapter);
@@ -69,13 +74,6 @@ public class BaseFragment extends Fragment implements BaseView, View.OnClickList
             listAdapter.refresh(dailyNews);
             listAdapter.notifyDataSetChanged();
         }
-    }
-
-    @Override
-    public void onClick(View v) {
-        Intent intent = new Intent(getActivity(), NewsContentActivity.class);
-        intent.putExtra(SourceUrl.NEWS_ID, String.valueOf(v.getTag()));
-        getActivity().startActivity(intent);
     }
 
     class ContentListAdapter extends RecyclerView.Adapter {
@@ -112,20 +110,20 @@ public class BaseFragment extends Fragment implements BaseView, View.OnClickList
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            if(holder instanceof NormalViewHolder) {
+            if (holder instanceof NormalViewHolder) {
                 NormalViewHolder normalViewHolder = (NormalViewHolder) holder;
                 normalViewHolder.linearLayout.setTag(dailyNews.getStories().get(position).getId());
                 normalViewHolder.textView.setText(dailyNews.getStories().get(position).getTitle());
                 Picasso.with(context).load(dailyNews.getStories().get(position).getImages().get(0)).into(normalViewHolder.imageView);
-            } else if(holder instanceof FirstNewsViewHolder) {
+            } else if (holder instanceof FirstNewsViewHolder) {
                 FirstNewsViewHolder firstNewsViewHolder = (FirstNewsViewHolder) holder;
                 firstNewsViewHolder.linearLayout.setTag(dailyNews.getStories().get(position).getId());
                 firstNewsViewHolder.date.setText(dailyNews.getDate());
                 firstNewsViewHolder.title.setText(dailyNews.getStories().get(position).getTitle());
                 Picasso.with(context).load(dailyNews.getStories().get(position).getImages().get(0)).into(firstNewsViewHolder.imageView);
-            } else if(holder instanceof TopNewsViewHolder) {
+            } else if (holder instanceof TopNewsViewHolder) {
                 final TopNewsViewHolder topNewsViewHolder = (TopNewsViewHolder) holder;
-                if(topNewsPagerAdaper == null) {
+                if (topNewsPagerAdaper == null) {
                     topNewsPagerAdaper = new TopNewsPagerAdaper(context, dailyNews);
                     topNewsViewHolder.viewPager_top_news.setAdapter(topNewsPagerAdaper);
                     topNewsViewHolder.viewPager_top_news.setCurrentItem(0);
@@ -160,9 +158,9 @@ public class BaseFragment extends Fragment implements BaseView, View.OnClickList
 
         @Override
         public int getItemViewType(int position) {
-            if(position == 0) {
+            if (position == 0) {
                 return TYPE_TOP_NEWS;
-            } else if(position == 1) {
+            } else if (position == 1) {
                 return TYPE_FIRST_NEWS;
             } else {
                 return TYPE_NORMAL_NEWS;
@@ -172,10 +170,18 @@ public class BaseFragment extends Fragment implements BaseView, View.OnClickList
         class TopNewsViewHolder extends RecyclerView.ViewHolder {
             private ViewPager viewPager_top_news;
             private CircleIndicator viewpager_indicator;
+
             public TopNewsViewHolder(View itemView) {
                 super(itemView);
                 viewPager_top_news = (ViewPager) itemView.findViewById(R.id.vp_top_news);
                 viewpager_indicator = (CircleIndicator) itemView.findViewById(R.id.viewpager_indicator);
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startNewsContent(String.valueOf(dailyNews.getStories().get(getAdapterPosition()).getId()),
+                                dailyNews.getStories().get(getAdapterPosition()).getImages().get(0));
+                    }
+                });
             }
         }
 
@@ -184,13 +190,20 @@ public class BaseFragment extends Fragment implements BaseView, View.OnClickList
             private LinearLayout linearLayout;
             private TextView title;
             private ImageView imageView;
+
             public FirstNewsViewHolder(View itemView) {
                 super(itemView);
                 date = (TextView) itemView.findViewById(R.id.tv_date);
                 linearLayout = (LinearLayout) itemView.findViewById(R.id.base_swipe_item_container);
                 title = (TextView) itemView.findViewById(R.id.base_swipe_item_title);
                 imageView = (ImageView) itemView.findViewById(R.id.base_swipe_item_icon);
-                linearLayout.setOnClickListener(BaseFragment.this);
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startNewsContent(String.valueOf(dailyNews.getStories().get(getAdapterPosition()).getId()),
+                                dailyNews.getStories().get(getAdapterPosition()).getImages().get(0));
+                    }
+                });
             }
         }
 
@@ -198,12 +211,19 @@ public class BaseFragment extends Fragment implements BaseView, View.OnClickList
             private LinearLayout linearLayout;
             private TextView textView;
             private ImageView imageView;
+
             public NormalViewHolder(View itemView) {
                 super(itemView);
                 linearLayout = (LinearLayout) itemView.findViewById(R.id.base_swipe_item_container);
                 textView = (TextView) itemView.findViewById(R.id.base_swipe_item_title);
                 imageView = (ImageView) itemView.findViewById(R.id.base_swipe_item_icon);
-                linearLayout.setOnClickListener(BaseFragment.this);
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startNewsContent(String.valueOf(dailyNews.getStories().get(getAdapterPosition()).getId()),
+                                dailyNews.getStories().get(getAdapterPosition()).getImages().get(0));
+                    }
+                });
             }
         }
     }
@@ -229,12 +249,18 @@ public class BaseFragment extends Fragment implements BaseView, View.OnClickList
         }
 
         @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            if(itemList.size() <= position) {
+        public Object instantiateItem(ViewGroup container, final int position) {
+            if (itemList.size() <= position) {
                 View item = LayoutInflater.from(context).inflate(R.layout.top_news_item, null);
                 itemList.add(item);
                 item.setTag(dailyNews.getTop_stories().get(position).getId());
-                item.setOnClickListener(BaseFragment.this);
+                item.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startNewsContent(String.valueOf(dailyNews.getTop_stories().get(position).getId()),
+                                dailyNews.getTop_stories().get(position).getImage());
+                    }
+                });
             }
             container.addView(itemList.get(position));
             Picasso.with(context).load(dailyNews.getTop_stories().get(position).getImage()).into(
@@ -242,8 +268,6 @@ public class BaseFragment extends Fragment implements BaseView, View.OnClickList
             ((TextView) itemList.get(position).findViewById(R.id.tv_top_news_title)).setText(
                     dailyNews.getTop_stories().get(position).getTitle());
             return itemList.get(position);
-
-
         }
 
         @Override
@@ -254,5 +278,13 @@ public class BaseFragment extends Fragment implements BaseView, View.OnClickList
         public void setData(DailyNews dailyNews) {
             this.dailyNews = dailyNews;
         }
+    }
+
+    private void startNewsContent(String news, String header_img_path){
+        Intent intent = new Intent();
+        intent.setClass(getActivity(), NewsContentActivity.class);
+        intent.putExtra(SourceUrl.NEWS_ID, news);
+        intent.putExtra(SourceUrl.NEWS_HEADER_IMG_ID, header_img_path);
+        startActivity(intent);
     }
 }
