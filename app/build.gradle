@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion '25.0.2'
     defaultConfig {
         applicationId "com.snick.zzj.t_reader"
         minSdkVersion 23
@@ -44,5 +44,4 @@ dependencies {
     compile 'me.relex:circleindicator:1.2.2@aar'
     //viwepager indicator
     compile files('src/main/libs/tbs_sdk_thirdapp_v3.0.0.1038_43000_sharewithdownload_obfs_20170110_144724.jar')
-
 }

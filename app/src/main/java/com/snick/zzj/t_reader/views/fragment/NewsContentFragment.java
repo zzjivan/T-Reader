@@ -65,8 +65,9 @@ public class NewsContentFragment extends Fragment implements NewsContentView{
 
     @Override
     public void onNewsLoaded(final NewsContent content) {
-        //TODO:弱爆了，不知道正确的CSS引入姿势是什么。。
-        String s = "<link rel=\"stylesheet\" href=" + content.getCss().get(0) + "\">"+content.getBody();
+        String css = content.getCss().get(0);
+        css.replace("<div class=\"img-place-holder\">", "");//css布局对header有一个200px的图片预留，知乎应该有js来实现滑动，我没获取到。
+        String s = "<link rel=\"stylesheet\" href=" + css + "\">"+content.getBody();
         tbsContent.loadDataWithBaseURL(null, s, "text/html", "utf-8", null);
         tbsContent.setWebViewClient(new WebViewClient() {
             @Override
