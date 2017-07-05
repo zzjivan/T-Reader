@@ -13,19 +13,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.snick.zzj.t_reader.R;
 import com.snick.zzj.t_reader.beans.DailyNews;
+import com.snick.zzj.t_reader.beans.Story;
 import com.snick.zzj.t_reader.presenter.BasePresenter;
 import com.snick.zzj.t_reader.presenter.impl.BasePresenterImpl;
 import com.snick.zzj.t_reader.utils.SourceUrl;
 import com.snick.zzj.t_reader.views.NewsContentActivity;
 import com.squareup.picasso.Picasso;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import me.relex.circleindicator.CircleIndicator;
@@ -37,14 +40,14 @@ import me.relex.circleindicator.CircleIndicator;
 
 public class BaseFragment extends Fragment implements BaseView {
 
-    private static final int TAG_HEADER_IMG = 1000;
-    private static final int TAG_NEWS_ID = 1001;
-
     private BasePresenter basePresenter;
-
     private RecyclerView listView;
+    private ContentListAdapter listAdapter;
 
-    ContentListAdapter listAdapter;
+    private String date;
+    private List<DailyNews> CachedNews = new ArrayList<>();
+    private List<String> LoadedDate = new ArrayList<>();
+    private boolean needLoadMore = false;
 
     public BaseFragment() {
     }
@@ -53,7 +56,9 @@ public class BaseFragment extends Fragment implements BaseView {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         basePresenter = new BasePresenterImpl(getActivity(), this);
-        basePresenter.refreshViews();
+        SimpleDateFormat dateFormat = new SimpleDateFormat(SourceUrl.DateFormat);
+        date = String.valueOf(Integer.parseInt(dateFormat.format(System.currentTimeMillis())));
+        basePresenter.refreshViews(SourceUrl.News, "latest");
     }
 
     @Nullable
@@ -61,19 +66,51 @@ public class BaseFragment extends Fragment implements BaseView {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.base, container, false);
         listView = (RecyclerView) view.findViewById(R.id.list);
+        listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                needLoadMore = isReachBottom(recyclerView);
+                //到达底部 && 已加载完成
+                //&& !LoadedDate.contains(date)
+                if(needLoadMore  && CachedNews.get(CachedNews.size()-1).getDate().equals(date)) {
+                    basePresenter.refreshViews(SourceUrl.oldNews, date);//api规则：获取5号的News，date则为6号，会+1
+                    needLoadMore = false;
+                    LoadedDate.add(date);
+                    date = String.valueOf(Integer.parseInt(date)-1);
+                }
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
         return view;
     }
 
     @Override
     public void refreshViews(DailyNews dailyNews) {
+        if(!CachedNews.contains(dailyNews)) {
+            CachedNews.add(dailyNews);
+        }
+
         if (listAdapter == null) {
-            listAdapter = new ContentListAdapter(getActivity(), dailyNews);
+            listAdapter = new ContentListAdapter(getActivity(), CachedNews);
             listView.setLayoutManager(new LinearLayoutManager(this.getContext()));
             listView.setAdapter(listAdapter);
         } else {
-            listAdapter.refresh(dailyNews);
+            listAdapter.refresh(CachedNews);
             listAdapter.notifyDataSetChanged();
         }
+    }
+
+    private boolean isReachBottom(RecyclerView recyclerView) {
+        LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+        int visibleItemCount = layoutManager.getChildCount();
+        int totalItemCount = layoutManager.getItemCount();
+        int scrollState = recyclerView.getScrollState();
+        if(visibleItemCount > 0 && lastVisibleItemPosition == totalItemCount - 1 &&
+                scrollState == recyclerView.SCROLL_STATE_SETTLING)
+            return true;
+        else
+            return false;
     }
 
     class ContentListAdapter extends RecyclerView.Adapter {
@@ -81,16 +118,43 @@ public class BaseFragment extends Fragment implements BaseView {
         private final int TYPE_FIRST_NEWS = 1;
         private final int TYPE_NORMAL_NEWS = 2;
         private Context context;
-        private DailyNews dailyNews;
+        private List<DailyNews> dailyNewsList;
+        private List<Story> storyList = new ArrayList<>();
         private TopNewsPagerAdaper topNewsPagerAdaper;
+        private List<Integer> firstNewsFlag = new ArrayList<>();
 
-        ContentListAdapter(Context context, DailyNews dailyNews) {
+        ContentListAdapter(Context context, List<DailyNews> dailyNewsList) {
             this.context = context;
-            this.dailyNews = dailyNews;
+            refresh(dailyNewsList);
         }
 
-        public void refresh(DailyNews dailyNews) {
-            this.dailyNews = dailyNews;
+        public void refresh(List<DailyNews> dailyNewsList) {
+            this.dailyNewsList = dailyNewsList;
+
+            int flag = 1;
+            firstNewsFlag.clear();
+            for(int i = 0; i < dailyNewsList.size(); i ++) {
+                if(i >= 1)
+                    flag += dailyNewsList.get(i-1).getStories().size();
+                firstNewsFlag.add(flag);
+            }
+
+            storyList.clear();
+            for(DailyNews dailyNews : dailyNewsList)
+                storyList.addAll(dailyNews.getStories());
+        }
+
+        private DailyNews getDailyNewsByPosition(int position) {
+            DailyNews dailyNews = null;
+            int count = 0;
+            for(int i = 0; i < dailyNewsList.size(); i ++) {
+                dailyNews = dailyNewsList.get(i);
+                count += dailyNews.getStories().size();
+                if(count >= position)
+                    break;
+                dailyNews = null;
+            }
+            return dailyNews;
         }
 
         @Override
@@ -110,17 +174,27 @@ public class BaseFragment extends Fragment implements BaseView {
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            //因为第一个item为TopNews的容器，因此position偏移1
+            //下面的ViewHolder中的click事件需一样处理
+            if(position != 0)
+                position -= 1;
+
+            //获取dailyNews时，position是不需要-1的。
+            //例如第一个dailyNews获取是用position=1来获取，而不是position=0.
+            DailyNews dailyNews = getDailyNewsByPosition(position+1);
+            if(dailyNews == null) return;
+
             if (holder instanceof NormalViewHolder) {
                 NormalViewHolder normalViewHolder = (NormalViewHolder) holder;
-                normalViewHolder.linearLayout.setTag(dailyNews.getStories().get(position).getId());
-                normalViewHolder.textView.setText(dailyNews.getStories().get(position).getTitle());
-                Picasso.with(context).load(dailyNews.getStories().get(position).getImages().get(0)).into(normalViewHolder.imageView);
+                normalViewHolder.linearLayout.setTag(storyList.get(position).getId());
+                normalViewHolder.textView.setText(storyList.get(position).getTitle());
+                Picasso.with(context).load(storyList.get(position).getImages().get(0)).into(normalViewHolder.imageView);
             } else if (holder instanceof FirstNewsViewHolder) {
                 FirstNewsViewHolder firstNewsViewHolder = (FirstNewsViewHolder) holder;
-                firstNewsViewHolder.linearLayout.setTag(dailyNews.getStories().get(position).getId());
-                firstNewsViewHolder.date.setText(dailyNews.getDate());
-                firstNewsViewHolder.title.setText(dailyNews.getStories().get(position).getTitle());
-                Picasso.with(context).load(dailyNews.getStories().get(position).getImages().get(0)).into(firstNewsViewHolder.imageView);
+                firstNewsViewHolder.linearLayout.setTag(storyList.get(position).getId());
+                firstNewsViewHolder.date.setText(dateFormat(dailyNews.getDate()));
+                firstNewsViewHolder.title.setText(storyList.get(position).getTitle());
+                Picasso.with(context).load(storyList.get(position).getImages().get(0)).into(firstNewsViewHolder.imageView);
             } else if (holder instanceof TopNewsViewHolder) {
                 final TopNewsViewHolder topNewsViewHolder = (TopNewsViewHolder) holder;
                 if (topNewsPagerAdaper == null) {
@@ -153,14 +227,18 @@ public class BaseFragment extends Fragment implements BaseView {
 
         @Override
         public int getItemCount() {
-            return dailyNews.getStories().size();
+            //第一个item为topNews的容器，count从1开始加
+            int count = 1;
+            for(DailyNews dailyNews : dailyNewsList)
+                count += dailyNews.getStories().size();
+            return count;
         }
 
         @Override
         public int getItemViewType(int position) {
             if (position == 0) {
                 return TYPE_TOP_NEWS;
-            } else if (position == 1) {
+            } else if (firstNewsFlag.contains(position)) {
                 return TYPE_FIRST_NEWS;
             } else {
                 return TYPE_NORMAL_NEWS;
@@ -178,8 +256,8 @@ public class BaseFragment extends Fragment implements BaseView {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startNewsContent(String.valueOf(dailyNews.getStories().get(getAdapterPosition()).getId()),
-                                dailyNews.getStories().get(getAdapterPosition()).getImages().get(0));
+                        startNewsContent(String.valueOf(dailyNewsList.get(0).getStories().get(getAdapterPosition()).getId()),
+                                dailyNewsList.get(0).getStories().get(getAdapterPosition()).getImages().get(0));
                     }
                 });
             }
@@ -200,8 +278,8 @@ public class BaseFragment extends Fragment implements BaseView {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startNewsContent(String.valueOf(dailyNews.getStories().get(getAdapterPosition()).getId()),
-                                dailyNews.getStories().get(getAdapterPosition()).getImages().get(0));
+                        startNewsContent(String.valueOf(storyList.get(getAdapterPosition()-1).getId()),
+                                storyList.get(getAdapterPosition()-1).getImages().get(0));
                     }
                 });
             }
@@ -220,8 +298,8 @@ public class BaseFragment extends Fragment implements BaseView {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startNewsContent(String.valueOf(dailyNews.getStories().get(getAdapterPosition()).getId()),
-                                dailyNews.getStories().get(getAdapterPosition()).getImages().get(0));
+                        startNewsContent(String.valueOf(storyList.get(getAdapterPosition()-1).getId()),
+                                storyList.get(getAdapterPosition()-1).getImages().get(0));
                     }
                 });
             }
@@ -286,5 +364,47 @@ public class BaseFragment extends Fragment implements BaseView {
         intent.putExtra(SourceUrl.NEWS_ID, news);
         intent.putExtra(SourceUrl.NEWS_HEADER_IMG_ID, header_img_path);
         startActivity(intent);
+    }
+
+    private String dateFormat(String date) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+        if(simpleDateFormat.format(System.currentTimeMillis()).equals(date))
+            return getContext().getResources().getText(R.string.date_today).toString();
+        else {
+            int year = Integer.parseInt(date.substring(0,4));
+            int mounth = Integer.parseInt(date.substring(4,6));
+            int day = Integer.parseInt(date.substring(6,8));
+            Calendar c = Calendar.getInstance();
+            c.set(Calendar.YEAR, year);
+            c.set(Calendar.MONTH, mounth-1);
+            c.set(Calendar.DATE, day);
+            int week = c.get(Calendar.DAY_OF_WEEK);
+            String weekday = "";
+            switch (week) {
+                case 1:
+                    weekday = "天";
+                    break;
+                case 2:
+                    weekday = "一";
+                    break;
+                case 3:
+                    weekday = "二";
+                    break;
+                case 4:
+                    weekday = "三";
+                    break;
+                case 5:
+                    weekday = "四";
+                    break;
+                case 6:
+                    weekday = "五";
+                    break;
+                case 7:
+                    weekday = "六";
+                    break;
+                default:break;
+            }
+            return getContext().getResources().getString(R.string.date_detail, mounth, day, weekday);
+        }
     }
 }

@@ -32,7 +32,7 @@ public class BasePresenterImpl implements BasePresenter {
     }
 
     @Override
-    public void refreshViews() {
+    public void refreshViews(String type, String date) {
         baseModel.refreshViews(new Observer<DailyNews>() {//rxAndroid处理回调
             @Override
             public void onCompleted() {
@@ -47,9 +47,8 @@ public class BasePresenterImpl implements BasePresenter {
             @Override
             public void onNext(DailyNews dailyNews) {
                 baseView.refreshViews(dailyNews);
-
             }
-        });
+        }, type, date);
     }
 
     @Override

@@ -11,9 +11,8 @@ import rx.Observer;
 
 public interface BaseModel {
 
-    void refreshViews(Observer<DailyNews> observer);
-
-    void getOldNews(String date, Observer<DailyNews> observer);
+    //获取某一天的新闻列表，date：20170704，则获取7月3日的列表
+    void refreshViews(Observer<DailyNews> observer, String type, String date);
 
     void getNewsContent(String newsId, Observer<DailyNews> observer);
 }

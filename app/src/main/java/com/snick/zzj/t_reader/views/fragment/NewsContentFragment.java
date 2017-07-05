@@ -65,16 +65,9 @@ public class NewsContentFragment extends Fragment implements NewsContentView{
 
     @Override
     public void onNewsLoaded(final NewsContent content) {
-        String css = content.getCss().get(0);
-        css.replace("<div class=\"img-place-holder\">", "");//css布局对header有一个200px的图片预留，知乎应该有js来实现滑动，我没获取到。
-        String s = "<link rel=\"stylesheet\" href=" + css + "\">"+content.getBody();
-        tbsContent.loadDataWithBaseURL(null, s, "text/html", "utf-8", null);
-        tbsContent.setWebViewClient(new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                return true;
-            }
-        });
+        String css = "<link rel=\"stylesheet\" href=" + content.getCss().get(0) + "\">";
+        String html = "<html><head>" + css + "</head><body>" + content.getBody() + "</body></html>";
+        html = html.replace("<div class=\"img-place-holder\">", "");//布局对header有一个200px的图片预留，知乎应该有js来实现滑动，我没获取到。
+        tbsContent.loadDataWithBaseURL("x-data://base", html, "text/html", "utf-8", null);
     }
 }

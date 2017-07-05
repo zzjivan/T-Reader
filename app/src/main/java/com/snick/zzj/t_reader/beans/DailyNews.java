@@ -34,4 +34,9 @@ public class DailyNews {
     public void setTop_stories(List<TopStory> top_stories) {
         this.top_stories = top_stories;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return date.equals(obj);
+    }
 }

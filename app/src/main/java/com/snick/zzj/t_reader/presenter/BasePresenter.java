@@ -5,6 +5,6 @@ package com.snick.zzj.t_reader.presenter;
  */
 
 public interface BasePresenter {
-    void refreshViews();
+    void refreshViews(String type, String date);
     void handleNewsClick(String newsId);
 }

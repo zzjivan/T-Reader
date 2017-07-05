@@ -1,6 +1,5 @@
 package com.snick.zzj.t_reader.model.impl;
 
-import android.graphics.Bitmap;
 
 import com.snick.zzj.t_reader.beans.DailyNews;
 import com.snick.zzj.t_reader.model.BaseModel;
@@ -20,10 +19,11 @@ import rx.schedulers.Schedulers;
 
 public class BaseModelImpl implements BaseModel {
 
+    //获取某一天的新闻列表，date：20170704，则获取7月3日的列表
     @Override
-    public void refreshViews(Observer<DailyNews> observer) {
+    public void refreshViews(Observer<DailyNews> observer, String type, String date) {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(SourceUrl.News)
+                .baseUrl(type)
                 //增加返回值为String的支持
                 .addConverterFactory(ScalarsConverterFactory.create())
                 //增加返回值为Gson的支持(以实体类返回)
@@ -32,15 +32,10 @@ public class BaseModelImpl implements BaseModel {
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
         DailyNewsRequestService dailyNewsRequestService = retrofit.create(DailyNewsRequestService.class);
-        dailyNewsRequestService.getDailyNews("latest")
+        dailyNewsRequestService.getDailyNews(date)
                 .subscribeOn(Schedulers.io())//不加这个会出现android.os.NetworkOnMainThreadException
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
-    }
-
-    @Override
-    public void getOldNews(String date, Observer<DailyNews> observer) {
-
     }
 
     @Override

@@ -5,4 +5,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+    <string name="date_today">今日要闻</string>
+    <string name="date_detail">%1$d月%2$d日 星期%3$s</string>
 </resources>

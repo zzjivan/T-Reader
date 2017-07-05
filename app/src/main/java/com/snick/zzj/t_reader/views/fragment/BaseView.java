@@ -8,6 +8,5 @@ import com.snick.zzj.t_reader.beans.DailyNews;
  */
 
 public interface BaseView {
-
     void refreshViews(DailyNews dailyNews);
 }
