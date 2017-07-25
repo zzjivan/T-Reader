@@ -8,4 +8,5 @@ package com.snick.zzj.t_reader.presenter;
 public interface NewsContentPresenter {
 
     void loadNewsContent(String newsId);
+    void loadNewsExtraInfo(String newId);
 }

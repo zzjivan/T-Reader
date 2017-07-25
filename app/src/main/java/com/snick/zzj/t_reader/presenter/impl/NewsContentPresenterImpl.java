@@ -3,6 +3,7 @@ package com.snick.zzj.t_reader.presenter.impl;
 import android.content.Context;
 
 import com.snick.zzj.t_reader.beans.NewsContent;
+import com.snick.zzj.t_reader.beans.NewsExtraInfo;
 import com.snick.zzj.t_reader.model.NewsContentModel;
 import com.snick.zzj.t_reader.presenter.NewsContentPresenter;
 import com.snick.zzj.t_reader.views.fragment.NewsContentView;
@@ -42,6 +43,26 @@ public class NewsContentPresenterImpl implements NewsContentPresenter {
             @Override
             public void onNext(NewsContent newsContent) {
                 newsContentView.onNewsLoaded(newsContent);
+            }
+        });
+    }
+
+    @Override
+    public void loadNewsExtraInfo(String newsId) {
+        newsContentModel.loadNewsExtraInfo(newsId, new Observer<NewsExtraInfo>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(NewsExtraInfo newsExtraInfo) {
+                newsContentView.onNewsExtraInfoLoaded(newsExtraInfo);
             }
         });
     }

@@ -1,6 +1,7 @@
 package com.snick.zzj.t_reader.model.impl;
 
 import com.snick.zzj.t_reader.beans.NewsContent;
+import com.snick.zzj.t_reader.beans.NewsExtraInfo;
 import com.snick.zzj.t_reader.model.NewsContentModel;
 import com.snick.zzj.t_reader.utils.SourceUrl;
 
@@ -25,6 +26,20 @@ public class NewsContentModelImpl implements NewsContentModel {
                 .build();
         NewsContentRequestService newsContentRequestService = retrofit.create(NewsContentRequestService.class);
         newsContentRequestService.getNewsContent(newsId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
+    }
+
+    @Override
+    public void loadNewsExtraInfo(String newsId, Observer<NewsExtraInfo> observer) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(SourceUrl.extraInfo)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+        NewsContentRequestService newsContentRequestService = retrofit.create(NewsContentRequestService.class);
+        newsContentRequestService.getNewsExtraInfo(newsId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);

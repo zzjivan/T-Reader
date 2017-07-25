@@ -4,21 +4,36 @@
     tools:context=".views.NewsContentActivityt" >
 
     <item
-        android:id="@+id/ab_search"
-        android:orderInCategory="80"
-        android:title="action_search"
-        app:actionViewClass="android.support.v7.widget.SearchView"
-        app:showAsAction="ifRoom"/>
-    <item
         android:id="@+id/action_share"
         android:orderInCategory="90"
+        android:icon="@drawable/ic_share_black_24dp"
         android:title="action_share"
-        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
+
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="action_settings"
-        app:showAsAction="never"/>
+        android:id="@+id/action_favourite"
+        android:orderInCategory="90"
+        android:icon="@drawable/ic_star_black_24dp"
+        android:title="action_favourite"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_discuss"
+        android:orderInCategory="90"
+        android:icon="@drawable/ic_message_black_24dp"
+        android:title="..."
+        app:showAsAction="always|withText"/>
+        <!--app:actionLayout="@layout/menu_action_discuss_layout"
+        android的menu中icon和text是不会同时显示的，要想同时显示有2中方法：
+        通过反射，强制设置text显示。
+        自定义menu item的layout，这里我们采用后者-->
+
+    <item
+        android:id="@+id/action_zan"
+        android:orderInCategory="90"
+        android:icon="@drawable/ic_thumb_up_black_24dp"
+        android:title="..."
+        app:showAsAction="never"
+        app:actionLayout="@layout/menu_action_layout"/>
 
 </menu>
