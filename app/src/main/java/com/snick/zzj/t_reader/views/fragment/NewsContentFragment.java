@@ -55,6 +55,7 @@ public class NewsContentFragment extends Fragment implements NewsContentView{
         newsContentPresenter = new NewsContentPresenterImpl(getActivity(), newsContentModel, this);
         newsContentPresenter.loadNewsContent(newsId);
         newsContentPresenter.loadNewsExtraInfo(newsId);
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -79,26 +80,17 @@ public class NewsContentFragment extends Fragment implements NewsContentView{
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.newscontent, menu);
+        ((ImageView)menu.getItem(2).getActionView().findViewById(R.id.menu_item_icon)).setImageResource(R.drawable.ic_message_black_24dp);
+        menu.getItem(3).getActionView().setPaddingRelative(0,0,36,0);
+        ((ImageView)menu.getItem(3).getActionView().findViewById(R.id.menu_item_icon)).setImageResource(R.drawable.ic_thumb_up_black_24dp);
+        menu.getItem(3).getActionView().findViewById(R.id.menu_item_icon).setPaddingRelative(36,0,0,9);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-//        TextView textView = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.menu_action_layout,null);
-//        Drawable drawable = getResources().getDrawable(R.drawable.ic_message_black_24dp);
-//        drawable.setBounds(0,0,drawable.getMinimumWidth(),drawable.getMinimumHeight());
-//        textView.setCompoundDrawables(drawable,null,null,null);
-//        textView.setText(discuss);
-//        menu.getItem(2).setActionView(textView);
-
-        AppCompatTextView textView = (AppCompatTextView) menu.getItem(3).getActionView();
-        Drawable drawable = getResources().getDrawable(R.drawable.ic_thumb_up_black_24dp);
-        drawable.setBounds(0,0,drawable.getMinimumWidth(),drawable.getMinimumHeight());
-        //textView.setCompoundDrawables(drawable,null,null,null);
-        textView.setText(zan);
-        menu.getItem(3).setActionView(textView);
-
-        //((TextView) menu.getItem(3).getActionView()).setText(zan);
+        ((TextView)menu.getItem(2).getActionView().findViewById(R.id.menu_item_title)).setText(String.valueOf(discuss));
+        ((TextView)menu.getItem(3).getActionView().findViewById(R.id.menu_item_title)).setText(String.valueOf(zan));
         super.onPrepareOptionsMenu(menu);
     }
 
@@ -115,7 +107,6 @@ public class NewsContentFragment extends Fragment implements NewsContentView{
         //刷新menu中的数据
         discuss = info.getComments();
         zan = info.getPopularity();
-        Log.d("NewsContentFragment","onNewsExtra:"+discuss+","+zan);
         getActivity().invalidateOptionsMenu();
     }
 }

@@ -18,12 +18,16 @@
             android:background="@color/colorPrimaryDark"/>
     </FrameLayout>
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"
-        android:background="?attr/colorPrimary"
-        apps:popupTheme="@style/AppTheme.PopupOverlay" />
+        android:theme="@style/toolbar_theme">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_height"
+            android:background="?attr/colorPrimary"/>
+    </android.support.design.widget.AppBarLayout>
 
     <com.tencent.smtt.sdk.WebView
         android:id="@+id/tbsContent"

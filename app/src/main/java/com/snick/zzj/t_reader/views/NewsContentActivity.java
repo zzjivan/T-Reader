@@ -29,10 +29,4 @@ public class NewsContentActivity extends AppCompatActivity {
         fragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.newscontent,menu);
-        return true;
-    }
 }
