@@ -10,5 +10,9 @@
     <dimen name="top_news_header_height">240dp</dimen>
 
     <dimen name="toolbar_height">60dp</dimen>
+    <dimen name="news_header_real_height">200dp</dimen>
     <dimen name="news_header_height">260dp</dimen><!--200+60-->
+    <dimen name="news_header_offset_range">120dp</dimen>
+
+    <dimen name="news_content_init_offset">@dimen/news_header_height</dimen>
 </resources>
