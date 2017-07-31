@@ -24,23 +24,22 @@ public class ToolbarBehavior extends CoordinatorLayout.Behavior<AppBarLayout> {
 
     @Override
     public boolean layoutDependsOn(CoordinatorLayout parent, AppBarLayout child, View dependency) {
-        return dependency != null && dependency.getId() == R.id.tbsContent;
+        return dependency != null && dependency.getId() == R.id.content_webview;
     }
 
     @Override
     public boolean onDependentViewChanged(CoordinatorLayout parent, AppBarLayout child, View dependency) {
-        Log.d("zjzhu","toolbar:"+dependency.getTranslationY());
-        if(dependency.getTranslationY() <= 0 && dependency.getTranslationY() >= -getAlphaChangeOffsetRange()) {
-            child.setAlpha((float) (Math.abs(dependency.getTranslationY()) * 255 / getAlphaChangeOffsetRange()));
+        if(dependency.getTranslationY() <= getContentInitOffset() && dependency.getTranslationY() >= getToolbarHeight()) {
+            child.setAlpha((float) (1 - Math.abs(getContentInitOffset() - dependency.getTranslationY()) / (getContentInitOffset()-getToolbarHeight())));
         }
         return false;
     }
 
-    /**
-     * Header移动real_height距离过程中，toolbar是改变透明度
-     * @return
-     */
-    private int getAlphaChangeOffsetRange() {
-        return context.getResources().getDimensionPixelOffset(R.dimen.news_header_real_height);
+    private int getContentInitOffset() {
+        return context.getResources().getDimensionPixelOffset(R.dimen.news_content_init_offset);
+    }
+
+    private int getToolbarHeight() {
+        return context.getResources().getDimensionPixelOffset(R.dimen.toolbar_height);
     }
 }
