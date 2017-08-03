@@ -35,7 +35,7 @@ public class NewsThemes {
         this.others = others;
     }
 
-    class Detail {
+    public class Detail {
         private long color;
         private String thumbnail;
         private String description;

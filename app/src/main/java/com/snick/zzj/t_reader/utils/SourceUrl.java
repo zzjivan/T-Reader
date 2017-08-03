@@ -20,5 +20,5 @@ public class SourceUrl {
     public static final String oldNews = "http://news-at.zhihu.com/api/4/news/before/";//后接日期20170218
     public static final String extraInfo = "http://news-at.zhihu.com/api/4/story-extra/"; //后接具体id
 
-    public static final String newsThemeList = "https://news-at.zhihu.com/api/4/themes";
+    public static final String newsThemeList = "https://news-at.zhihu.com/api/4/";
 }

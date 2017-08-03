@@ -1,5 +1,7 @@
 package com.snick.zzj.t_reader.presenter.impl;
 
+import android.util.Log;
+
 import com.snick.zzj.t_reader.beans.NewsThemes;
 import com.snick.zzj.t_reader.model.MainNavModel;
 import com.snick.zzj.t_reader.model.impl.MainNavModelImpl;
@@ -28,17 +30,15 @@ public class MainNavPresenterImpl implements MainNavPresenter {
 
             @Override
             public void onCompleted() {
-
             }
 
             @Override
             public void onError(Throwable e) {
-
             }
 
             @Override
             public void onNext(NewsThemes newsThemes) {
-                mainNavView.onThemesLoaded(newsThemes);
+                Log.d("zjzhu","onNext:"+newsThemes.getOthers().get(1).getName());mainNavView.onThemesLoaded(newsThemes);
             }
         });
     }

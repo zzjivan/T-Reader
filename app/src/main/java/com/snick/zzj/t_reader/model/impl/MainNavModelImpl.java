@@ -28,10 +28,11 @@ public class MainNavModelImpl implements MainNavModel {
                 //增加RxJava支持
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
-//        DailyNewsRequestService dailyNewsRequestService = retrofit.create(DailyNewsRequestService.class);
-//        dailyNewsRequestService.getDailyNews(date)
-//                .subscribeOn(Schedulers.io())//不加这个会出现android.os.NetworkOnMainThreadException
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(observer);
+
+        DailyNewsRequestService dailyNewsRequestService = retrofit.create(DailyNewsRequestService.class);
+        dailyNewsRequestService.getNewsThemes("themes")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
     }
 }

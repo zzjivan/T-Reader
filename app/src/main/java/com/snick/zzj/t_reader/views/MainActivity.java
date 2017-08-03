@@ -8,6 +8,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -40,7 +41,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        mainNavPresenter = new MainNavPresenterImpl();
+        mainNavPresenter = new MainNavPresenterImpl(this);
         mainNavPresenter.getThemes();
 
         getSupportFragmentManager().beginTransaction().add(R.id.content, new BaseFragment(), "base").commit();
@@ -105,6 +106,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onThemesLoaded(NewsThemes themes) {
-
+        Log.d("zjzhu","onThemesLoaded:"+themes.getOthers().get(0).getThumbnail());
     }
 }
