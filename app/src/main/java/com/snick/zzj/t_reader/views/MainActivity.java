@@ -12,10 +12,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.snick.zzj.t_reader.R;
+import com.snick.zzj.t_reader.beans.NewsThemes;
+import com.snick.zzj.t_reader.presenter.MainNavPresenter;
+import com.snick.zzj.t_reader.presenter.impl.MainNavPresenterImpl;
 import com.snick.zzj.t_reader.views.fragment.BaseFragment;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements MainNavView, NavigationView.OnNavigationItemSelectedListener {
+
+    private MainNavPresenter mainNavPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +39,9 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        mainNavPresenter = new MainNavPresenterImpl();
+        mainNavPresenter.getThemes();
 
         getSupportFragmentManager().beginTransaction().add(R.id.content, new BaseFragment(), "base").commit();
     }
@@ -93,5 +101,10 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onThemesLoaded(NewsThemes themes) {
+
     }
 }
