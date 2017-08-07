@@ -37,8 +37,7 @@ public class MainNavPresenterImpl implements MainNavPresenter {
             }
 
             @Override
-            public void onNext(NewsThemes newsThemes) {
-                Log.d("zjzhu","onNext:"+newsThemes.getOthers().get(1).getName());mainNavView.onThemesLoaded(newsThemes);
+            public void onNext(NewsThemes newsThemes) {mainNavView.onThemesLoaded(newsThemes);
             }
         });
     }

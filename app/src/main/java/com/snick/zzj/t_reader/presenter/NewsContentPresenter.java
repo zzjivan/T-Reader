@@ -9,4 +9,5 @@ public interface NewsContentPresenter {
 
     void loadNewsContent(String newsId);
     void loadNewsExtraInfo(String newId);
+
 }
