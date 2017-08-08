@@ -4,6 +4,10 @@ import android.support.v4.util.SparseArrayCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.snick.zzj.t_reader.R;
 
 /**
  * Created by zzj on 17-8-7.
@@ -53,11 +57,19 @@ public class HeaderAndFooterWrapper<T> extends RecyclerView.Adapter<RecyclerView
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //这里才是精华！！
         // 每一个Header和Footer都当做一个viewtype，而且type数值起的非常大，这不会影响正常定义其他的viewtype
+        //header和footer没必要创建viewholder，毕竟不需要重用？
         if(mHeadersView.get(viewType) != null)
-            return null;
+            return new NormalViewHolder(mHeadersView.get(viewType));
         else if(mFootersView.get(viewType) != null)
-            return null;
+            return new NormalViewHolder(mHeadersView.get(viewType));
         return mInnerAdapter.onCreateViewHolder(parent, viewType);
+    }
+
+    class NormalViewHolder extends RecyclerView.ViewHolder {
+
+        public NormalViewHolder(View itemView) {
+            super(itemView);
+        }
     }
 
     @Override

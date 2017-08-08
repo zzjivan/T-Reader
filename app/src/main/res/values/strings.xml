@@ -14,5 +14,7 @@
     <string name="my_favourite">我的收藏</string>
     <string name="file_download">离线下载</string>
 
+    <string name="editor">主编</string>
+
     <string name="night_mode">夜间模式</string>
 </resources>

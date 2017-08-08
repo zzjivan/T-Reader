@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity
             Bundle bundle = new Bundle();
             bundle.putString("theme_id",String.valueOf(cachedNewsThemes.getOthers().get(itemId).getId()));
             fragment.setArguments(bundle);
-            getSupportFragmentManager().beginTransaction().add(R.id.content, fragment, "base").commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.content, fragment, "base").commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

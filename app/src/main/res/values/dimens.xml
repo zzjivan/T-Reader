@@ -20,4 +20,8 @@
     <dimen name="news_content_init_offset">@dimen/news_header_height</dimen>
 
     <dimen name="header_motion">120dp</dimen>
+
+    <dimen name="editor_height">56dp</dimen>
+    <dimen name="editor_img_size">24dp</dimen>
+    <dimen name="editor_img_margin">8dp</dimen>
 </resources>
