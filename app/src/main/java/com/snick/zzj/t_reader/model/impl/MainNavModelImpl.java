@@ -4,6 +4,9 @@ import com.snick.zzj.t_reader.beans.NewsThemes;
 import com.snick.zzj.t_reader.model.MainNavModel;
 import com.snick.zzj.t_reader.utils.SourceUrl;
 
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -17,6 +20,17 @@ import rx.schedulers.Schedulers;
  */
 
 public class MainNavModelImpl implements MainNavModel {
+    private OkHttpClient okHttpClient;
+
+    public MainNavModelImpl() {
+        //设置超时时间
+        okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(5, TimeUnit.SECONDS)
+                .readTimeout(5, TimeUnit.SECONDS)
+                .writeTimeout(5, TimeUnit.SECONDS)
+                //错误重连
+                .retryOnConnectionFailure(true).build();
+    }
 
     @Override
     public void loadThemes(Observer<NewsThemes> observer) {
@@ -27,6 +41,7 @@ public class MainNavModelImpl implements MainNavModel {
                 .addConverterFactory(GsonConverterFactory.create())
                 //增加RxJava支持
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .client(okHttpClient)
                 .build();
 
         DailyNewsRequestService dailyNewsRequestService = retrofit.create(DailyNewsRequestService.class);

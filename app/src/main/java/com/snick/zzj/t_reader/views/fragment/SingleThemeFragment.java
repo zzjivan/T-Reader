@@ -23,6 +23,7 @@ import com.snick.zzj.t_reader.beans.ThemeNews;
 import com.snick.zzj.t_reader.presenter.SingleThemePresenter;
 import com.snick.zzj.t_reader.presenter.impl.SingleThemePresenterImpl;
 import com.snick.zzj.t_reader.views.adapter.HeaderAndFooterWrapper;
+import com.snick.zzj.t_reader.views.customviews.CircleImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -94,17 +95,21 @@ public class SingleThemeFragment extends Fragment implements SingleThemeView {
             RelativeLayout.LayoutParams layoutParams1 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     getActivity().getResources().getDimensionPixelOffset(R.dimen.editor_height));
             editor.setLayoutParams(layoutParams1);
-            ImageView imageView1 = (ImageView) editor.findViewById(R.id.editor_image_1);
-            Picasso.with(getActivity()).load(themeNews.getEditors().get(0).getAvatar()).into(imageView1);
+            CircleImageView imageView1 = (CircleImageView) editor.findViewById(R.id.editor_image_1);
+            Picasso.with(getActivity()).load(themeNews.getEditors().get(0).getAvatar())
+                    //.transform(new CircleTransform()) Picasso直接转换，效果很好。
+                    .into(imageView1);
             LinearLayout editorContainer = (LinearLayout) editor.findViewById(R.id.editor_image_container);
             int margin = getActivity().getResources().getDimensionPixelOffset(R.dimen.editor_img_margin);
             int size = getActivity().getResources().getDimensionPixelSize(R.dimen.editor_img_size);
             LinearLayout.LayoutParams layoutParams2 = new LinearLayout.LayoutParams(size,size);
             for(int i = 1; i < themeNews.getEditors().size(); i ++) {
-                ImageView imageView2 = new ImageView(getActivity());
+                CircleImageView imageView2 = new CircleImageView(getActivity());
                 layoutParams2.setMargins(margin,margin,margin,margin);
                 imageView2.setLayoutParams(layoutParams2);
-                Picasso.with(getActivity()).load(themeNews.getEditors().get(i).getAvatar()).into(imageView2);
+                Picasso.with(getActivity()).load(themeNews.getEditors().get(i).getAvatar())
+                        //.transform(new CircleTransform())
+                        .into(imageView2);
                 editorContainer.addView(imageView2);
             }
 

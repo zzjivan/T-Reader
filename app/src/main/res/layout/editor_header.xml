@@ -18,14 +18,12 @@
         android:layout_toRightOf="@id/editor_title"
         android:layout_marginStart="16dp">
 
-        <ImageView
+        <com.snick.zzj.t_reader.views.customviews.CircleImageView
             android:id="@+id/editor_image_1"
             android:layout_width="@dimen/editor_img_size"
             android:layout_height="@dimen/editor_img_size"
-            android:layout_margin="8dp" />
+            android:layout_margin="8dp"/>
 
     </LinearLayout>
-
-
 
 </RelativeLayout>

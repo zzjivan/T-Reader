@@ -5,6 +5,9 @@ import com.snick.zzj.t_reader.beans.DailyNews;
 import com.snick.zzj.t_reader.model.BaseModel;
 import com.snick.zzj.t_reader.utils.SourceUrl;
 
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -19,6 +22,18 @@ import rx.schedulers.Schedulers;
 
 public class BaseModelImpl implements BaseModel {
 
+    private OkHttpClient okHttpClient;
+
+    public BaseModelImpl() {
+        //设置超时时间
+        okHttpClient = new OkHttpClient.Builder()
+        .connectTimeout(5, TimeUnit.SECONDS)
+        .readTimeout(5, TimeUnit.SECONDS)
+        .writeTimeout(5, TimeUnit.SECONDS)
+        //错误重连
+        .retryOnConnectionFailure(true).build();
+    }
+
     //获取某一天的新闻列表，date：20170704，则获取7月3日的列表
     @Override
     public void refreshViews(Observer<DailyNews> observer, String type, String date) {
@@ -30,6 +45,7 @@ public class BaseModelImpl implements BaseModel {
                 .addConverterFactory(GsonConverterFactory.create())
                 //增加RxJava支持
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .client(okHttpClient)
                 .build();
         DailyNewsRequestService dailyNewsRequestService = retrofit.create(DailyNewsRequestService.class);
         dailyNewsRequestService.getDailyNews(date)
@@ -48,6 +64,7 @@ public class BaseModelImpl implements BaseModel {
                 .addConverterFactory(GsonConverterFactory.create())
                 //增加RxJava支持
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .client(okHttpClient)
                 .build();
         DailyNewsRequestService dailyNewsRequestService = retrofit.create(DailyNewsRequestService.class);
         dailyNewsRequestService.getDailyNews(newsId)
