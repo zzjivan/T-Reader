@@ -123,6 +123,12 @@ public class SingleThemeFragment extends Fragment implements SingleThemeView {
         }
     }
 
+    public void refresh(String themeId) {
+        newsListAdapter.clean();
+        newsListAdapterWrapper = null;
+        singleThemePresenter.loadThemeNews(themeId);
+    }
+
     class NewsListAdapter extends RecyclerView.Adapter {
 
         private List<ThemeNews> resources = new ArrayList<>();
@@ -137,6 +143,11 @@ public class SingleThemeFragment extends Fragment implements SingleThemeView {
             //if(!resources.contains(resource))
                 resources.add(resource);
             stories.addAll(resource.getStories());
+        }
+
+        public void clean() {
+            resources.clear();
+            stories.clear();
         }
 
         @Override

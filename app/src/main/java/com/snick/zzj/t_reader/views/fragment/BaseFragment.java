@@ -87,6 +87,7 @@ public class BaseFragment extends Fragment implements BaseView {
     @Override
     public void refreshViews(DailyNews dailyNews) {
         if(!CachedNews.contains(dailyNews)) {
+            Log.d("zjzhu","cachedNews add");
             CachedNews.add(dailyNews);
         }
 
@@ -98,6 +99,12 @@ public class BaseFragment extends Fragment implements BaseView {
             listAdapter.refresh(CachedNews);
             listAdapter.notifyDataSetChanged();
         }
+    }
+
+    public void refresh() {
+        CachedNews.clear();
+        listAdapter = null;
+        basePresenter.refreshViews(SourceUrl.News, "latest");
     }
 
     private boolean isReachBottom(RecyclerView recyclerView) {

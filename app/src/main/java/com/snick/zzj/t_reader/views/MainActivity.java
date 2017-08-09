@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -32,6 +33,11 @@ public class MainActivity extends AppCompatActivity
 
     private NewsThemes cachedNewsThemes;
 
+    private SingleThemeFragment singleThemeFragment;
+    private BaseFragment homepageFragment;
+
+    private MenuItem oldItem;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +59,8 @@ public class MainActivity extends AppCompatActivity
         mainNavPresenter = new MainNavPresenterImpl(this);
         mainNavPresenter.getThemes();
 
-        getSupportFragmentManager().beginTransaction().add(R.id.content, new BaseFragment(), "base").commit();
+        homepageFragment = new BaseFragment();
+        getSupportFragmentManager().beginTransaction().add(R.id.content, homepageFragment, "homepage").commit();
     }
 
     @Override
@@ -94,17 +101,40 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int itemId = item.getItemId();
         int groupId = item.getGroupId();
+        oldItem = item;
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
-        item.getActionView().setBackgroundColor(Color.parseColor("#e5e5e5"));
         if(groupId == 0) {
+            getSupportActionBar().setTitle(R.string.title_home_page);
             //跳转主页
+            if(homepageFragment == null)
+                homepageFragment = new BaseFragment();
+
+            if(!homepageFragment.isAdded()) {
+                homepageFragment.refresh();
+                ft.hide(singleThemeFragment);
+                ft.show(homepageFragment);
+                ft.commit();
+            }
         } else {
+            oldItem.getActionView().setBackgroundColor(Color.parseColor("#ffffff"));
+            item.getActionView().setBackgroundColor(Color.parseColor("#e5e5e5"));
+            oldItem = item;
             //跳转分页
-            Fragment fragment = new SingleThemeFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString("theme_id",String.valueOf(cachedNewsThemes.getOthers().get(itemId).getId()));
-            fragment.setArguments(bundle);
-            getSupportFragmentManager().beginTransaction().replace(R.id.content, fragment, "base").commit();
+            if(singleThemeFragment == null)
+                singleThemeFragment = new SingleThemeFragment();
+
+            if(singleThemeFragment.isAdded()) {
+                singleThemeFragment.refresh(String.valueOf(cachedNewsThemes.getOthers().get(itemId).getId()));
+                ft.hide(homepageFragment);
+                ft.show(singleThemeFragment);
+                ft.commit();
+            } else {
+                Bundle bundle = new Bundle();
+                bundle.putString("theme_id", String.valueOf(cachedNewsThemes.getOthers().get(itemId).getId()));
+                singleThemeFragment.setArguments(bundle);
+                ft.replace(R.id.content, singleThemeFragment, "singletheme").commit();
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
