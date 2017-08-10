@@ -124,8 +124,15 @@ public class SingleThemeFragment extends Fragment implements SingleThemeView {
     }
 
     public void refresh(String themeId) {
-        newsListAdapter.clean();
-        newsListAdapterWrapper = null;
+        if(newsListAdapter != null) {
+            newsListAdapter.clean();
+            newsListAdapter.notifyDataSetChanged();
+        }
+        if(newsListAdapterWrapper != null) {
+            newsListAdapterWrapper.cleanAll();
+            newsListAdapterWrapper.notifyDataSetChanged();
+            newsListAdapterWrapper = null;
+        }
         singleThemePresenter.loadThemeNews(themeId);
     }
 

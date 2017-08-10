@@ -87,7 +87,6 @@ public class BaseFragment extends Fragment implements BaseView {
     @Override
     public void refreshViews(DailyNews dailyNews) {
         if(!CachedNews.contains(dailyNews)) {
-            Log.d("zjzhu","cachedNews add");
             CachedNews.add(dailyNews);
         }
 

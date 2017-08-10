@@ -44,6 +44,11 @@ public class HeaderAndFooterWrapper<T> extends RecyclerView.Adapter<RecyclerView
         mHeadersView.put(mHeadersView.size() + BASE_ITEM_TYPE_FOOTER, footer);
     }
 
+    public void cleanAll() {
+        mHeadersView.clear();
+        mFootersView.clear();
+    }
+
     @Override
     public int getItemViewType(int position) {
         if(isHeader(position))

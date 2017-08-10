@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity
     private SingleThemeFragment singleThemeFragment;
     private BaseFragment homepageFragment;
 
-    private MenuItem oldItem;
+    private int oldItemId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,28 +101,49 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int itemId = item.getItemId();
         int groupId = item.getGroupId();
-        oldItem = item;
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
-        if(groupId == 0) {
-            getSupportActionBar().setTitle(R.string.title_home_page);
-            //跳转主页
-            if(homepageFragment == null)
-                homepageFragment = new BaseFragment();
 
-            if(!homepageFragment.isAdded()) {
+        /**
+         * 这里用了hide & show 避免创建过多的fragment实例，由于没有做缓存，每次进入theme还是要加载。
+         */
+        if(groupId == 0) {
+
+            getSupportActionBar().setTitle(R.string.title_home_page);
+
+            //跳转主页
+            if(homepageFragment == null) {
+                homepageFragment = new BaseFragment();
+            }
+
+            if(homepageFragment.isAdded()) {
                 homepageFragment.refresh();
                 ft.hide(singleThemeFragment);
                 ft.show(homepageFragment);
                 ft.commit();
             }
+            if(oldItemId != -1) {
+                navigationView.getMenu().getItem(oldItemId)
+                        .getActionView().setBackgroundColor(Color.parseColor("#ffffff"));
+                oldItemId = -1;
+            }
         } else {
-            oldItem.getActionView().setBackgroundColor(Color.parseColor("#ffffff"));
+            getSupportActionBar().setTitle(cachedNewsThemes.getOthers().get(itemId).getName());
+            if(oldItemId != -1) {
+                navigationView.getMenu().getItem(oldItemId)
+                        .getActionView().setBackgroundColor(Color.parseColor("#ffffff"));
+            }
             item.getActionView().setBackgroundColor(Color.parseColor("#e5e5e5"));
-            oldItem = item;
+            /**
+             * 因为把homepage单独作为了一个viewgroup，这里有一个注意点：
+             * item.getItemId是没有计算homepage这个group0的item的。
+             * 但是navigationView.getMenu().getItem传入的Id是全局的，会把所有group包含在内。
+             */
+            oldItemId = item.getItemId()+1;
             //跳转分页
-            if(singleThemeFragment == null)
+            if(singleThemeFragment == null) {
                 singleThemeFragment = new SingleThemeFragment();
+            }
 
             if(singleThemeFragment.isAdded()) {
                 singleThemeFragment.refresh(String.valueOf(cachedNewsThemes.getOthers().get(itemId).getId()));
@@ -133,7 +154,9 @@ public class MainActivity extends AppCompatActivity
                 Bundle bundle = new Bundle();
                 bundle.putString("theme_id", String.valueOf(cachedNewsThemes.getOthers().get(itemId).getId()));
                 singleThemeFragment.setArguments(bundle);
-                ft.replace(R.id.content, singleThemeFragment, "singletheme").commit();
+                ft.add(R.id.content, singleThemeFragment, "singletheme");
+                ft.hide(homepageFragment);
+                ft.commit();
             }
         }
 
