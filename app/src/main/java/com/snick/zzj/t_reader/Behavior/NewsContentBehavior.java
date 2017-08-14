@@ -25,7 +25,6 @@ public class NewsContentBehavior extends CoordinatorLayout.Behavior<NestedScroll
     }
 
     @Override
-
     public boolean layoutDependsOn(CoordinatorLayout parent, NestedScrollView child, View dependency) {
         return dependency != null && dependency.getId() == R.id.anchor;
     }
@@ -36,13 +35,17 @@ public class NewsContentBehavior extends CoordinatorLayout.Behavior<NestedScroll
         if(dependency.getTranslationY() == 0) {
             child.setTranslationY(getInitOffset());
         } else {
-            child.setTranslationY(getInitOffset() + dependency.getTranslationY() * getInitOffset() / getHeaderOffset());
+            if(dependency.getTranslationY() <= - getHeaderOffset())
+                child.setTranslationY(0);
+            else
+                child.setTranslationY(getInitOffset() + dependency.getTranslationY() * getInitOffset() / getHeaderOffset());
         }
         return false;
     }
 
     private int getInitOffset() {
-        return context.getResources().getDimensionPixelOffset(R.dimen.news_content_init_offset);
+        return context.getResources().getDimensionPixelOffset(R.dimen.news_content_init_offset)
+                + context.getResources().getDimensionPixelOffset(R.dimen.toolbar_height);
     }
 
     private int getHeaderOffset() {

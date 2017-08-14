@@ -29,6 +29,8 @@ public class ToolbarBehavior extends CoordinatorLayout.Behavior<AppBarLayout> {
 
     @Override
     public boolean onDependentViewChanged(CoordinatorLayout parent, AppBarLayout child, View dependency) {
+        if(dependency.getTranslationY() == 0 && child.getAlpha() != 1.0f)
+            child.setAlpha(0);
         if(dependency.getTranslationY() <= getContentInitOffset() && dependency.getTranslationY() >= getToolbarHeight()) {
             child.setAlpha((float) (1 - Math.abs(getContentInitOffset() - dependency.getTranslationY()) / (getContentInitOffset()-getToolbarHeight())));
         }

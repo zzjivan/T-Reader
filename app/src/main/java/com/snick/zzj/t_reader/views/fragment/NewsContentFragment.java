@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
@@ -39,6 +40,7 @@ public class NewsContentFragment extends Fragment implements NewsContentView{
     private NewsContentPresenter newsContentPresenter;
     private NewsContentModel newsContentModel;
 
+    private NestedScrollView nestedScrollView;
     private WebView tbsContent;
     private ImageView headerImage;
     private Toolbar toolbar;
@@ -65,6 +67,7 @@ public class NewsContentFragment extends Fragment implements NewsContentView{
         tbsContent = (WebView) view.findViewById(R.id.tbsContent);
         headerImage = (ImageView) view.findViewById(R.id.headerImage);
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+
         if (toolbar != null) {
             ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
             ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
