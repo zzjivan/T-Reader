@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -38,7 +37,7 @@ import me.relex.circleindicator.CircleIndicator;
  * Created by zzj on 17-2-6.
  */
 
-public class BaseFragment extends Fragment implements BaseView {
+public class BaseFragment extends RealBaseFragment implements BaseView {
 
     private BasePresenter basePresenter;
     private RecyclerView listView;

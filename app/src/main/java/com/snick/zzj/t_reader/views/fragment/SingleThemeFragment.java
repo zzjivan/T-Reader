@@ -35,7 +35,7 @@ import static android.view.View.GONE;
  * Created by zzj on 17-8-7.
  */
 
-public class SingleThemeFragment extends Fragment implements SingleThemeView {
+public class SingleThemeFragment extends RealBaseFragment implements SingleThemeView {
     private SingleThemePresenter singleThemePresenter = new SingleThemePresenterImpl(this);
     private RecyclerView listView;
     private NewsListAdapter newsListAdapter;

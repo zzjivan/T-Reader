@@ -15,7 +15,7 @@ import com.snick.zzj.t_reader.views.fragment.NewsContentFragment;
  * Created by zzj on 17-2-24.
  */
 
-public class NewsContentActivity extends AppCompatActivity {
+public class NewsContentActivity extends BaseActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

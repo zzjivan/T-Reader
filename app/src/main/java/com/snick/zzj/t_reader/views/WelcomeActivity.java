@@ -32,7 +32,7 @@ import rx.schedulers.Schedulers;
  * Created by zzj on 17-2-6.
  */
 
-public class WelcomeActivity extends AppCompatActivity {
+public class WelcomeActivity extends BaseActivity {
     private static final String TAG = "WelcomeActivity";
 
     @Override

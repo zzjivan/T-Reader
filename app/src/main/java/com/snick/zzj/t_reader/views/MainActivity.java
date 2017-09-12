@@ -3,12 +3,10 @@ package com.snick.zzj.t_reader.views;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,9 +21,8 @@ import com.snick.zzj.t_reader.presenter.MainNavPresenter;
 import com.snick.zzj.t_reader.presenter.impl.MainNavPresenterImpl;
 import com.snick.zzj.t_reader.views.fragment.BaseFragment;
 import com.snick.zzj.t_reader.views.fragment.SingleThemeFragment;
-import com.snick.zzj.t_reader.views.fragment.SingleThemeView;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
         implements MainNavView, NavigationView.OnNavigationItemSelectedListener {
 
     private MainNavPresenter mainNavPresenter;

@@ -28,14 +28,13 @@ import com.snick.zzj.t_reader.utils.SourceUrl;
 import com.snick.zzj.t_reader.R;
 import com.squareup.picasso.Picasso;
 import com.tencent.smtt.sdk.WebView;
-import com.tencent.smtt.sdk.WebViewClient;
 
 
 /**
  * Created by zzj on 17-2-24.
  */
 
-public class NewsContentFragment extends Fragment implements NewsContentView{
+public class NewsContentFragment extends RealBaseFragment implements NewsContentView{
 
     private NewsContentPresenter newsContentPresenter;
     private NewsContentModel newsContentModel;
