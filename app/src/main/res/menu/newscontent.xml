@@ -20,10 +20,9 @@
     <item
         android:id="@+id/action_discuss"
         android:orderInCategory="90"
-        android:icon="@drawable/ic_message_black_24dp"
         android:title="..."
-        app:showAsAction="always|withText"
-        app:actionLayout="@layout/menu_item"/>
+        app:showAsAction="always"
+        app:actionLayout="@layout/menu_item" />
         <!--app:actionLayout="@layout/menu_action_discuss_layout"
         android的menu中icon和text是不会同时显示的，要想同时显示有2中方法：
         通过反射，强制设置text显示。
@@ -32,7 +31,6 @@
     <item
         android:id="@+id/action_zan"
         android:orderInCategory="90"
-        android:icon="@drawable/ic_thumb_up_black_24dp"
         android:title="..."
         app:showAsAction="always"
         app:actionLayout="@layout/menu_item"/>

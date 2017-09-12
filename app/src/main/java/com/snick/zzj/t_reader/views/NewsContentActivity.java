@@ -2,10 +2,8 @@ package com.snick.zzj.t_reader.views;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
+import android.view.MotionEvent;
 
 import com.snick.zzj.t_reader.R;
 import com.snick.zzj.t_reader.utils.SourceUrl;

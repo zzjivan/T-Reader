@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -39,7 +40,6 @@ public class NewsContentFragment extends RealBaseFragment implements NewsContent
     private NewsContentPresenter newsContentPresenter;
     private NewsContentModel newsContentModel;
 
-    private NestedScrollView nestedScrollView;
     private WebView tbsContent;
     private ImageView headerImage;
     private Toolbar toolbar;
@@ -80,13 +80,27 @@ public class NewsContentFragment extends RealBaseFragment implements NewsContent
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.newscontent, menu);
-        ((ImageView)menu.getItem(2).getActionView().findViewById(R.id.menu_item_icon)).setImageResource(R.drawable.ic_message_black_24dp);
-        menu.getItem(3).getActionView().setPaddingRelative(0,0,36,0);
-        ((ImageView)menu.getItem(3).getActionView().findViewById(R.id.menu_item_icon)).setImageResource(R.drawable.ic_thumb_up_black_24dp);
-        menu.getItem(3).getActionView().findViewById(R.id.menu_item_icon).setPaddingRelative(36,0,0,9);
+    public void onCreateOptionsMenu(final Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.newscontent, menu);
+        ((ImageView)menu.getItem(2).getActionView().findViewById(R.id.menu_item_icon))
+                .setImageResource(R.drawable.ic_message_black_24dp);
+        menu.getItem(2).getActionView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onOptionsItemSelected(menu.getItem(2));
+            }
+        });
+        menu.getItem(3).getActionView().setPaddingRelative(0,0,36,0);
+        ((ImageView)menu.getItem(3).getActionView().findViewById(R.id.menu_item_icon))
+                .setImageResource(R.drawable.ic_thumb_up_black_24dp);
+        menu.getItem(3).getActionView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onOptionsItemSelected(menu.getItem(3));
+            }
+        });
+        menu.getItem(3).getActionView().findViewById(R.id.menu_item_icon).setPaddingRelative(36,0,0,9);
     }
 
     @Override
@@ -94,6 +108,27 @@ public class NewsContentFragment extends RealBaseFragment implements NewsContent
         ((TextView)menu.getItem(2).getActionView().findViewById(R.id.menu_item_title)).setText(String.valueOf(discuss));
         ((TextView)menu.getItem(3).getActionView().findViewById(R.id.menu_item_title)).setText(String.valueOf(zan));
         super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                getActivity().onBackPressed();
+                break;
+            case R.id.action_share:
+                break;
+            case R.id.action_favourite:
+                break;
+            case R.id.action_discuss:
+                break;
+            case R.id.action_zan:
+                zan++;
+                getActivity().invalidateOptionsMenu();
+                break;
+            default:break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

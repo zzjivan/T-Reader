@@ -1,10 +1,9 @@
 package com.snick.zzj.t_reader.views.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.print.PrintAttributes;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +21,8 @@ import com.snick.zzj.t_reader.R;
 import com.snick.zzj.t_reader.beans.ThemeNews;
 import com.snick.zzj.t_reader.presenter.SingleThemePresenter;
 import com.snick.zzj.t_reader.presenter.impl.SingleThemePresenterImpl;
+import com.snick.zzj.t_reader.utils.SourceUrl;
+import com.snick.zzj.t_reader.views.NewsContentActivity;
 import com.snick.zzj.t_reader.views.adapter.HeaderAndFooterWrapper;
 import com.snick.zzj.t_reader.views.customviews.CircleImageView;
 import com.squareup.picasso.Picasso;
@@ -157,6 +158,14 @@ public class SingleThemeFragment extends RealBaseFragment implements SingleTheme
             stories.clear();
         }
 
+        private void startNewsContent(String news, String header_img_path){
+            Intent intent = new Intent();
+            intent.setClass(getActivity(), NewsContentActivity.class);
+            intent.putExtra(SourceUrl.NEWS_ID, news);
+            intent.putExtra(SourceUrl.NEWS_HEADER_IMG_ID, header_img_path);
+            startActivity(intent);
+        }
+
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             return new NormalViewHolder(LayoutInflater.from(context).inflate(R.layout.recyclerview_item, parent, false));
@@ -191,8 +200,13 @@ public class SingleThemeFragment extends RealBaseFragment implements SingleTheme
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-//                        startNewsContent(String.valueOf(storyList.get(getAdapterPosition()-1).getId()),
-//                                storyList.get(getAdapterPosition()-1).getImages().get(0));
+                        String img = "-1";
+                        //TODO:最好其实不该在此处处理onClick，应该在通过listener在此处把position传出去。
+                        //此处-2是为了减去2个header的位置
+                        if(stories.get(getAdapterPosition()-2).getImages() != null)
+                            img = stories.get(getAdapterPosition()-2).getImages().get(0);
+                        startNewsContent(String.valueOf(stories.get(getAdapterPosition()-2).getId()),
+                                img);
                     }
                 });
             }
