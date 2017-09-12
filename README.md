@@ -4,6 +4,7 @@ T-Reader
 架构：MVP设计模式；
 网络请求：Retrofit + RxAndroid；
 图片加载：Picasso；
+内存监控：RefWatcher；
 
 API
 ====
