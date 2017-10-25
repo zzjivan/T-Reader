@@ -36,16 +36,18 @@ public class BasePresenterImpl implements BasePresenter {
         baseModel.refreshViews(new Observer<DailyNews>() {//rxAndroid处理回调
             @Override
             public void onCompleted() {
-
+                Log.d("zjzhu","refreshViews complete");
             }
 
             @Override
             public void onError(Throwable e) {
+                Log.e("zjzhu","refreshViews error");
                 e.printStackTrace();
             }
 
             @Override
             public void onNext(DailyNews dailyNews) {
+                Log.d("zjzhu","refreshViews next");
                 baseView.refreshViews(dailyNews);
             }
         }, type, date);

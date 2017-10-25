@@ -1,6 +1,7 @@
 package com.snick.zzj.t_reader.presenter.impl;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.snick.zzj.t_reader.beans.NewsContent;
 import com.snick.zzj.t_reader.beans.NewsExtraInfo;
@@ -32,16 +33,17 @@ public class NewsContentPresenterImpl implements NewsContentPresenter {
         newsContentModel.loadNewsContent(newsId, new Observer<NewsContent>() {
             @Override
             public void onCompleted() {
-
+                Log.d("zjzhu","loadNewsContent complete");
             }
 
             @Override
             public void onError(Throwable e) {
-
+                Log.e("zjzhu","loadNewsContent next");
             }
 
             @Override
             public void onNext(NewsContent newsContent) {
+                Log.d("zjzhu","loadNewsContent next");
                 newsContentView.onNewsLoaded(newsContent);
             }
         });

@@ -5,9 +5,6 @@ import com.snick.zzj.t_reader.beans.DailyNews;
 import com.snick.zzj.t_reader.model.BaseModel;
 import com.snick.zzj.t_reader.utils.SourceUrl;
 
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -20,19 +17,7 @@ import rx.schedulers.Schedulers;
  * Created by zzj on 17-2-6.
  */
 
-public class BaseModelImpl implements BaseModel {
-
-    private OkHttpClient okHttpClient;
-
-    public BaseModelImpl() {
-        //设置超时时间
-        okHttpClient = new OkHttpClient.Builder()
-        .connectTimeout(5, TimeUnit.SECONDS)
-        .readTimeout(5, TimeUnit.SECONDS)
-        .writeTimeout(5, TimeUnit.SECONDS)
-        //错误重连
-        .retryOnConnectionFailure(true).build();
-    }
+public class BaseModelImpl extends RootModelImpl implements BaseModel {
 
     //获取某一天的新闻列表，date：20170704，则获取7月3日的列表
     @Override
@@ -49,6 +34,7 @@ public class BaseModelImpl implements BaseModel {
                 .build();
         DailyNewsRequestService dailyNewsRequestService = retrofit.create(DailyNewsRequestService.class);
         dailyNewsRequestService.getDailyNews(date)
+                .retryWhen(new RetryWhenHandler(5))
                 .subscribeOn(Schedulers.io())//不加这个会出现android.os.NetworkOnMainThreadException
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
@@ -68,6 +54,7 @@ public class BaseModelImpl implements BaseModel {
                 .build();
         DailyNewsRequestService dailyNewsRequestService = retrofit.create(DailyNewsRequestService.class);
         dailyNewsRequestService.getDailyNews(newsId)
+                .retryWhen(new RetryWhenHandler(5))
                 .subscribeOn(Schedulers.io())//不加这个会出现android.os.NetworkOnMainThreadException
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);

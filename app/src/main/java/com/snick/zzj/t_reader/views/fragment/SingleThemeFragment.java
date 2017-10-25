@@ -162,7 +162,6 @@ public class SingleThemeFragment extends RealBaseFragment implements SingleTheme
             Intent intent = new Intent();
             intent.setClass(getActivity(), NewsContentActivity.class);
             intent.putExtra(SourceUrl.NEWS_ID, news);
-            intent.putExtra(SourceUrl.NEWS_HEADER_IMG_ID, header_img_path);
             startActivity(intent);
         }
 

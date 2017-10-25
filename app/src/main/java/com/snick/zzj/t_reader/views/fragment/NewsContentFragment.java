@@ -73,9 +73,6 @@ public class NewsContentFragment extends RealBaseFragment implements NewsContent
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle("");
         }
-
-        String headImg = getArguments().getString(SourceUrl.NEWS_HEADER_IMG_ID);
-        Picasso.with(getContext()).load(headImg).into(headerImage);
         return view;
     }
 
@@ -137,6 +134,8 @@ public class NewsContentFragment extends RealBaseFragment implements NewsContent
         String html = "<html><head>" + css + "</head><body>" + content.getBody() + "</body></html>";
         html = html.replace("<div class=\"img-place-holder\">", "");//布局对header有一个200px的图片预留，知乎应该有js来实现滑动，我没获取到。
         tbsContent.loadDataWithBaseURL("x-data://base", html, "text/html", "utf-8", null);
+        //加载清晰的header图片
+        Picasso.with(getContext()).load(content.getImage()).into(headerImage);
     }
 
     @Override

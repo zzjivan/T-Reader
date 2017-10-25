@@ -261,8 +261,7 @@ public class BaseFragment extends RealBaseFragment implements BaseView {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startNewsContent(String.valueOf(dailyNewsList.get(0).getStories().get(getAdapterPosition()).getId()),
-                                dailyNewsList.get(0).getStories().get(getAdapterPosition()).getImages().get(0));
+                        startNewsContent(String.valueOf(dailyNewsList.get(0).getStories().get(getAdapterPosition()).getId()));
                     }
                 });
             }
@@ -283,8 +282,7 @@ public class BaseFragment extends RealBaseFragment implements BaseView {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startNewsContent(String.valueOf(storyList.get(getAdapterPosition()-1).getId()),
-                                storyList.get(getAdapterPosition()-1).getImages().get(0));
+                        startNewsContent(String.valueOf(storyList.get(getAdapterPosition()-1).getId()));
                     }
                 });
             }
@@ -303,8 +301,7 @@ public class BaseFragment extends RealBaseFragment implements BaseView {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startNewsContent(String.valueOf(storyList.get(getAdapterPosition()-1).getId()),
-                                storyList.get(getAdapterPosition()-1).getImages().get(0));
+                        startNewsContent(String.valueOf(storyList.get(getAdapterPosition()-1).getId()));
                     }
                 });
             }
@@ -340,12 +337,12 @@ public class BaseFragment extends RealBaseFragment implements BaseView {
                 item.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startNewsContent(String.valueOf(dailyNews.getTop_stories().get(position).getId()),
-                                dailyNews.getTop_stories().get(position).getImage());
+                        startNewsContent(String.valueOf(dailyNews.getTop_stories().get(position).getId()));
                     }
                 });
             }
             container.addView(itemList.get(position));
+            Picasso.with(context).setIndicatorsEnabled(true);
             Picasso.with(context).load(dailyNews.getTop_stories().get(position).getImage()).into(
                     (ImageView) itemList.get(position).findViewById(R.id.im_top_news_item_img));
             ((TextView) itemList.get(position).findViewById(R.id.tv_top_news_title)).setText(
@@ -363,11 +360,10 @@ public class BaseFragment extends RealBaseFragment implements BaseView {
         }
     }
 
-    private void startNewsContent(String news, String header_img_path){
+    private void startNewsContent(String news){
         Intent intent = new Intent();
         intent.setClass(getActivity(), NewsContentActivity.class);
         intent.putExtra(SourceUrl.NEWS_ID, news);
-        intent.putExtra(SourceUrl.NEWS_HEADER_IMG_ID, header_img_path);
         startActivity(intent);
     }
 

@@ -6,9 +6,6 @@ import com.snick.zzj.t_reader.beans.ThemeNews;
 import com.snick.zzj.t_reader.model.SingleThemeModel;
 import com.snick.zzj.t_reader.utils.SourceUrl;
 
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -21,18 +18,7 @@ import rx.schedulers.Schedulers;
  * Created by zzj on 17-8-7.
  */
 
-public class SingleThemeModelImpl implements SingleThemeModel {
-    private OkHttpClient okHttpClient;
-
-    public SingleThemeModelImpl() {
-        //设置超时时间
-        okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(5, TimeUnit.SECONDS)
-                .readTimeout(5, TimeUnit.SECONDS)
-                .writeTimeout(5, TimeUnit.SECONDS)
-                //错误重连
-                .retryOnConnectionFailure(true).build();
-    }
+public class SingleThemeModelImpl extends RootModelImpl implements SingleThemeModel {
 
     @Override
     public void loadSingleTheme(Observer<ThemeNews> observer, String id) {
@@ -47,6 +33,7 @@ public class SingleThemeModelImpl implements SingleThemeModel {
                 .build();
         DailyNewsRequestService dailyNewsRequestService = retrofit.create(DailyNewsRequestService.class);
         dailyNewsRequestService.getThemeNews(id)
+                .retryWhen(new RetryWhenHandler(5))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);

@@ -23,7 +23,6 @@ public class NewsContentActivity extends BaseActivity {
         NewsContentFragment fragment = new NewsContentFragment();
         Bundle bundle = new Bundle();
         bundle.putString(SourceUrl.NEWS_ID, getIntent().getStringExtra(SourceUrl.NEWS_ID));
-        bundle.putString(SourceUrl.NEWS_HEADER_IMG_ID, getIntent().getStringExtra(SourceUrl.NEWS_HEADER_IMG_ID));
         fragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
     }
