@@ -1,6 +1,8 @@
 package com.snick.zzj.t_reader.model.impl;
 
 
+import android.content.Context;
+
 import com.snick.zzj.t_reader.beans.DailyNews;
 import com.snick.zzj.t_reader.model.BaseModel;
 import com.snick.zzj.t_reader.utils.SourceUrl;
@@ -13,11 +15,15 @@ import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-/**
+/**主页Model
  * Created by zzj on 17-2-6.
  */
 
 public class BaseModelImpl extends RootModelImpl implements BaseModel {
+
+    public BaseModelImpl(Context context) {
+        super(context);
+    }
 
     //获取某一天的新闻列表，date：20170704，则获取7月3日的列表
     @Override

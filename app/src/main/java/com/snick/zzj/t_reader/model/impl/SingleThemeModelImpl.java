@@ -1,5 +1,6 @@
 package com.snick.zzj.t_reader.model.impl;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.snick.zzj.t_reader.beans.ThemeNews;
@@ -14,11 +15,15 @@ import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-/**
+/**单个主题内容列表页面Model
  * Created by zzj on 17-8-7.
  */
 
 public class SingleThemeModelImpl extends RootModelImpl implements SingleThemeModel {
+
+    public SingleThemeModelImpl(Context context) {
+        super(context);
+    }
 
     @Override
     public void loadSingleTheme(Observer<ThemeNews> observer, String id) {

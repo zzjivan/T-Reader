@@ -1,13 +1,9 @@
 package com.snick.zzj.t_reader.views.fragment;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,7 +27,7 @@ import com.squareup.picasso.Picasso;
 import com.tencent.smtt.sdk.WebView;
 
 
-/**
+/**内容详情fragment
  * Created by zzj on 17-2-24.
  */
 
@@ -52,7 +48,7 @@ public class NewsContentFragment extends RealBaseFragment implements NewsContent
         super.onCreate(savedInstanceState);
 
         String newsId = getArguments().getString(SourceUrl.NEWS_ID);
-        newsContentModel = new NewsContentModelImpl();
+        newsContentModel = new NewsContentModelImpl(getContext());
         newsContentPresenter = new NewsContentPresenterImpl(getActivity(), newsContentModel, this);
         newsContentPresenter.loadNewsContent(newsId);
         newsContentPresenter.loadNewsExtraInfo(newsId);
@@ -70,8 +66,10 @@ public class NewsContentFragment extends RealBaseFragment implements NewsContent
         if (toolbar != null) {
             ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
             ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle("");
+            if (null != actionBar) {
+                actionBar.setDisplayHomeAsUpEnabled(true);
+                actionBar.setTitle("");
+            }
         }
         return view;
     }

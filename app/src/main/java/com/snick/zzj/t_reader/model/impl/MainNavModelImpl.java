@@ -1,5 +1,7 @@
 package com.snick.zzj.t_reader.model.impl;
 
+import android.content.Context;
+
 import com.snick.zzj.t_reader.beans.NewsThemes;
 import com.snick.zzj.t_reader.model.MainNavModel;
 import com.snick.zzj.t_reader.utils.SourceUrl;
@@ -12,11 +14,15 @@ import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-/**
+/**侧面抽屉栏Model
  * Created by zzj on 17-8-3.
  */
 
 public class MainNavModelImpl extends RootModelImpl implements MainNavModel {
+
+    public MainNavModelImpl(Context context) {
+        super(context);
+    }
 
     @Override
     public void loadThemes(Observer<NewsThemes> observer) {

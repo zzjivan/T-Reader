@@ -1,5 +1,6 @@
 package com.snick.zzj.t_reader.presenter.impl;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.snick.zzj.t_reader.beans.ThemeNews;
@@ -10,7 +11,7 @@ import com.snick.zzj.t_reader.views.fragment.SingleThemeView;
 
 import rx.Observer;
 
-/**
+/**单个主题的页面
  * Created by zzj on 17-8-7.
  */
 
@@ -19,9 +20,9 @@ public class SingleThemePresenterImpl implements SingleThemePresenter {
     private SingleThemeModel singleThemeModel;
     private SingleThemeView singleThemeView;
 
-    public SingleThemePresenterImpl(SingleThemeView view){
+    public SingleThemePresenterImpl(Context context, SingleThemeView view){
         this.singleThemeView = view;
-        singleThemeModel = new SingleThemeModelImpl();
+        singleThemeModel = new SingleThemeModelImpl(context);
     }
 
     @Override

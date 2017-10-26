@@ -2,6 +2,7 @@ package com.snick.zzj.t_reader.views;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -41,19 +42,20 @@ public class MainActivity extends BaseActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(R.string.title_home_page);
+        if (null != getSupportActionBar())
+            getSupportActionBar().setTitle(R.string.title_home_page);
         toolbar.setTitleTextColor(Color.parseColor("#ffffff"));
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        mainNavPresenter = new MainNavPresenterImpl(this);
+        mainNavPresenter = new MainNavPresenterImpl(this,this);
         mainNavPresenter.getThemes();
 
         homepageFragment = new BaseFragment();
@@ -94,19 +96,19 @@ public class MainActivity extends BaseActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int itemId = item.getItemId();
         int groupId = item.getGroupId();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
 
-        /**
-         * 这里用了hide & show 避免创建过多的fragment实例，由于没有做缓存，每次进入theme还是要加载。
+        /*
+          这里用了hide & show 避免创建过多的fragment实例，由于没有做缓存，每次进入theme还是要加载。
          */
         if(groupId == 0) {
-
-            getSupportActionBar().setTitle(R.string.title_home_page);
+            if (null != getSupportActionBar())
+                getSupportActionBar().setTitle(R.string.title_home_page);
 
             //跳转主页
             if(homepageFragment == null) {
@@ -125,16 +127,17 @@ public class MainActivity extends BaseActivity
                 oldItemId = -1;
             }
         } else {
-            getSupportActionBar().setTitle(cachedNewsThemes.getOthers().get(itemId).getName());
+            if (null != getSupportActionBar())
+                getSupportActionBar().setTitle(cachedNewsThemes.getOthers().get(itemId).getName());
             if(oldItemId != -1) {
                 navigationView.getMenu().getItem(oldItemId)
                         .getActionView().setBackgroundColor(Color.parseColor("#ffffff"));
             }
             item.getActionView().setBackgroundColor(Color.parseColor("#e5e5e5"));
-            /**
-             * 因为把homepage单独作为了一个viewgroup，这里有一个注意点：
-             * item.getItemId是没有计算homepage这个group0的item的。
-             * 但是navigationView.getMenu().getItem传入的Id是全局的，会把所有group包含在内。
+            /*
+              因为把homepage单独作为了一个viewgroup，这里有一个注意点：
+              item.getItemId是没有计算homepage这个group0的item的。
+              但是navigationView.getMenu().getItem传入的Id是全局的，会把所有group包含在内。
              */
             oldItemId = item.getItemId()+1;
             //跳转分页
@@ -169,8 +172,8 @@ public class MainActivity extends BaseActivity
         navigationView.getMenu().add(0, 0, 0, null)
                 .setTitle(R.string.title_home_page)
                 .setIcon(R.drawable.ic_home_black_24dp);
-        View view = null;
-        TextView textView = null;
+        View view;
+        TextView textView;
         for(int i = 0; i < themes.getOthers().size(); i ++) {
             view = LayoutInflater.from(this).inflate(R.layout.nav_menu_item_layout, null);
             textView = (TextView) view.findViewById(R.id.nav_item_title);

@@ -1,5 +1,6 @@
 package com.snick.zzj.t_reader.model.impl;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.snick.zzj.t_reader.beans.NewsContent;
@@ -14,11 +15,15 @@ import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-/**
+/**内容详情页Model
  * Created by zzj on 17-2-24.
  */
 
 public class NewsContentModelImpl extends RootModelImpl implements NewsContentModel {
+
+    public NewsContentModelImpl(Context context) {
+        super(context);
+    }
 
     @Override
     public void loadNewsContent(String newsId, Observer<NewsContent> observer) {

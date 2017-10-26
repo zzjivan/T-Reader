@@ -1,5 +1,6 @@
 package com.snick.zzj.t_reader.presenter.impl;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.snick.zzj.t_reader.beans.NewsThemes;
@@ -10,7 +11,7 @@ import com.snick.zzj.t_reader.views.MainNavView;
 
 import rx.Observer;
 
-/**
+/**侧面抽屉栏
  * Created by zzj on 17-8-3.
  */
 
@@ -19,8 +20,8 @@ public class MainNavPresenterImpl implements MainNavPresenter {
     private MainNavModel mainNavModel;
     private MainNavView mainNavView;
 
-    public MainNavPresenterImpl(MainNavView view) {
-        mainNavModel = new MainNavModelImpl();
+    public MainNavPresenterImpl(Context context, MainNavView view) {
+        mainNavModel = new MainNavModelImpl(context);
         mainNavView = view;
     }
 

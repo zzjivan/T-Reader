@@ -7,11 +7,12 @@ import com.snick.zzj.t_reader.beans.DailyNews;
 import com.snick.zzj.t_reader.model.BaseModel;
 import com.snick.zzj.t_reader.model.impl.BaseModelImpl;
 import com.snick.zzj.t_reader.presenter.BasePresenter;
+import com.snick.zzj.t_reader.utils.Constants;
 import com.snick.zzj.t_reader.views.fragment.BaseView;
 
 import rx.Observer;
 
-/**
+/**主页
  * Created by zzj on 17-2-6.
  */
 
@@ -28,7 +29,7 @@ public class BasePresenterImpl implements BasePresenter {
     public BasePresenterImpl(Context context, BaseView baseview) {
         this.context = context;
         this.baseView = baseview;
-        baseModel = new BaseModelImpl();
+        baseModel = new BaseModelImpl(context);
     }
 
     @Override
@@ -36,18 +37,21 @@ public class BasePresenterImpl implements BasePresenter {
         baseModel.refreshViews(new Observer<DailyNews>() {//rxAndroid处理回调
             @Override
             public void onCompleted() {
-                Log.d("zjzhu","refreshViews complete");
+                if (Constants.DEBUG_NETWORK)
+                    Log.d("zjzhu","refreshViews complete");
             }
 
             @Override
             public void onError(Throwable e) {
-                Log.e("zjzhu","refreshViews error");
+                if (Constants.DEBUG_NETWORK)
+                    Log.e("zjzhu","refreshViews error");
                 e.printStackTrace();
             }
 
             @Override
             public void onNext(DailyNews dailyNews) {
-                Log.d("zjzhu","refreshViews next");
+                if (Constants.DEBUG_NETWORK)
+                    Log.d("zjzhu","refreshViews next");
                 baseView.refreshViews(dailyNews);
             }
         }, type, date);

@@ -7,11 +7,12 @@ import com.snick.zzj.t_reader.beans.NewsContent;
 import com.snick.zzj.t_reader.beans.NewsExtraInfo;
 import com.snick.zzj.t_reader.model.NewsContentModel;
 import com.snick.zzj.t_reader.presenter.NewsContentPresenter;
+import com.snick.zzj.t_reader.utils.Constants;
 import com.snick.zzj.t_reader.views.fragment.NewsContentView;
 
 import rx.Observer;
 
-/**
+/**详情页
  * Created by zzj on 17-2-24.
  */
 
@@ -33,17 +34,20 @@ public class NewsContentPresenterImpl implements NewsContentPresenter {
         newsContentModel.loadNewsContent(newsId, new Observer<NewsContent>() {
             @Override
             public void onCompleted() {
-                Log.d("zjzhu","loadNewsContent complete");
+                if (Constants.DEBUG_NETWORK)
+                    Log.d("zjzhu","loadNewsContent complete");
             }
 
             @Override
             public void onError(Throwable e) {
-                Log.e("zjzhu","loadNewsContent next");
+                if (Constants.DEBUG_NETWORK)
+                    Log.e("zjzhu","loadNewsContent error");
             }
 
             @Override
             public void onNext(NewsContent newsContent) {
-                Log.d("zjzhu","loadNewsContent next");
+                if (Constants.DEBUG_NETWORK)
+                    Log.d("zjzhu","loadNewsContent next");
                 newsContentView.onNewsLoaded(newsContent);
             }
         });

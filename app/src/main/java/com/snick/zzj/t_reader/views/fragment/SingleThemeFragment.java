@@ -32,12 +32,12 @@ import java.util.List;
 
 import static android.view.View.GONE;
 
-/**
+/** 单个主题内容列表fragment
  * Created by zzj on 17-8-7.
  */
 
 public class SingleThemeFragment extends RealBaseFragment implements SingleThemeView {
-    private SingleThemePresenter singleThemePresenter = new SingleThemePresenterImpl(this);
+    private SingleThemePresenter singleThemePresenter;
     private RecyclerView listView;
     private NewsListAdapter newsListAdapter;
     private HeaderAndFooterWrapper newsListAdapterWrapper;
@@ -47,6 +47,7 @@ public class SingleThemeFragment extends RealBaseFragment implements SingleTheme
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         String themeId = getArguments().getString("theme_id");
+         singleThemePresenter = new SingleThemePresenterImpl(getContext(),this);
         singleThemePresenter.loadThemeNews(themeId);
     }
 
@@ -77,7 +78,8 @@ public class SingleThemeFragment extends RealBaseFragment implements SingleTheme
     @Override
     public void onNewsLoaded(ThemeNews themeNews) {
         if(newsListAdapterWrapper == null) {
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(themeNews.getName());
+            if (null != ((AppCompatActivity) getActivity()).getSupportActionBar())
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(themeNews.getName());
             newsListAdapter = new NewsListAdapter(getActivity());
             newsListAdapter.addResource(themeNews);
             newsListAdapterWrapper = new HeaderAndFooterWrapper(newsListAdapter);
@@ -137,17 +139,17 @@ public class SingleThemeFragment extends RealBaseFragment implements SingleTheme
         singleThemePresenter.loadThemeNews(themeId);
     }
 
-    class NewsListAdapter extends RecyclerView.Adapter {
+    private class NewsListAdapter extends RecyclerView.Adapter {
 
         private List<ThemeNews> resources = new ArrayList<>();
         private List<ThemeNews.ThemeStory> stories = new ArrayList<>();
         private Context context;
 
-        public NewsListAdapter(Context context) {
+        NewsListAdapter(Context context) {
             this.context = context;
         }
 
-        public void addResource(ThemeNews resource) {
+        void addResource(ThemeNews resource) {
             //if(!resources.contains(resource))
                 resources.add(resource);
             stories.addAll(resource.getStories());
@@ -191,7 +193,7 @@ public class SingleThemeFragment extends RealBaseFragment implements SingleTheme
             private TextView textView;
             private ImageView imageView;
 
-            public NormalViewHolder(View itemView) {
+            NormalViewHolder(View itemView) {
                 super(itemView);
                 linearLayout = (LinearLayout) itemView.findViewById(R.id.base_swipe_item_container);
                 textView = (TextView) itemView.findViewById(R.id.base_swipe_item_title);
