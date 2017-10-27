@@ -17,7 +17,7 @@ import okhttp3.Response;
 
 public class CacheInterceptor implements Interceptor {
     public static final int CACHE_SIZE = 1024 * 1024 * 10;
-    private static final int TIMEOUT_CONNECT = 60 * 60 * 24; //24小时
+    private static final int TIMEOUT_CONNECT = 60 * 60 * 12; //12小时
 
     @Override
     public Response intercept(Chain chain) throws IOException {

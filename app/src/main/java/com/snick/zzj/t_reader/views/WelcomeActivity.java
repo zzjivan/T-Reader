@@ -1,17 +1,20 @@
 package com.snick.zzj.t_reader.views;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.snick.zzj.t_reader.R;
 import com.snick.zzj.t_reader.beans.WelcomeImage;
@@ -28,18 +31,23 @@ import rx.Subscriber;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
-/**
+/**欢迎界面
  * Created by zzj on 17-2-6.
  */
 
 public class WelcomeActivity extends BaseActivity {
     private static final String TAG = "WelcomeActivity";
 
+    // 要申请的权限
+    private String[] permissions = {Manifest.permission.READ_PHONE_STATE};
+
+    private Handler handler;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //showWelcomeImage();
-        Handler handler = new Handler();
+        showWelcomeImage();
+        handler = new Handler();
         handler.postDelayed(new Runnable(){
 
             @Override
@@ -49,12 +57,47 @@ public class WelcomeActivity extends BaseActivity {
                 startActivity(intent);
                 finish();
             }
-        }, 1000);
+        }, 5000);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // 检查该权限是否已经获取
+            int i = ContextCompat.checkSelfPermission(this, permissions[0]);
+            // 权限是否已经 授权 GRANTED---授权  DINIED---拒绝
+            if (i != PackageManager.PERMISSION_GRANTED) {
+                // 如果没有授予该权限，就去提示用户请求
+                ActivityCompat.requestPermissions(this, permissions, 321);
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        handler.removeCallbacksAndMessages(null);
+        super.onDestroy();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 321) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    // 判断用户是否 点击了不再提醒。(检测该权限是否还可以申请)
+                    boolean b = shouldShowRequestPermissionRationale(permissions[0]);
+                    if (!b) {
+                        // 用户还是想用我的 APP 的
+                        // 提示用户去应用设置界面手动开启权限
+                        //showDialogTipUserGoToAppSettting();
+                    } else
+                        finish();
+                } else {
+                    Toast.makeText(this, "权限获取成功", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 
     private void showWelcomeImage() {
-        //获取本地图片
 
         //本地没有图片，从网络获取
         Retrofit retrofit = new Retrofit.Builder()
@@ -72,41 +115,46 @@ public class WelcomeActivity extends BaseActivity {
                 .map(new Func1<WelcomeImage, Bitmap>() {
                     @Override
                     public Bitmap call(WelcomeImage welcomeImage) {
+                        Log.d(TAG,"welcome:"+welcomeImage.toString());
                         return null;
                     }
                 })
                 .subscribe(new Subscriber<Bitmap>() {
 
-                    ProgressDialog dialog = new ProgressDialog(WelcomeActivity.this);
-
                     @Override
                     public void onStart() {
-                        dialog.show();
                         super.onStart();
                     }
 
                     @Override
                     public void onCompleted() {
-                        dialog.dismiss();
+
                     }
 
                     @Override
                     public void onError(Throwable arg0) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                FrameLayout frameLayout = (FrameLayout) findViewById(android.R.id.content);
+                                frameLayout.setBackgroundResource(R.drawable.bg);
+                            }
+                        });
+
                         Log.d(TAG, "onError ===== " + arg0.toString());
                     }
 
                     @Override
                     public void onNext(Bitmap arg0) {
-                        LinearLayout linearLayout = (LinearLayout) findViewById(android.R.id.content);
-                        linearLayout.setBackground(new BitmapDrawable(arg0));
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                FrameLayout frameLayout = (FrameLayout) findViewById(android.R.id.content);
+                                frameLayout.setBackgroundResource(R.drawable.bg);
+                            }
+                        });
                     }
                 });
-    }
-
-    @Override
-    protected void onDestroy() {
-
-        super.onDestroy();
     }
 
     private interface RequestServices {

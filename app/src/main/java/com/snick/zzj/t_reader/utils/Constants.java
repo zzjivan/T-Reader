@@ -5,5 +5,5 @@ package com.snick.zzj.t_reader.utils;
  */
 
 public class Constants {
-    public static final boolean DEBUG_NETWORK = false;
+    public static final boolean DEBUG_NETWORK = true;
 }

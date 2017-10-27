@@ -23,4 +23,8 @@ public class WelcomeImage {
     public void setImg(String img) {
         this.img = img;
     }
+
+    public String toString() {
+        return text + "," + img;
+    }
 }

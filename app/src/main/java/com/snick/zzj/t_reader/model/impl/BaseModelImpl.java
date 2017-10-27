@@ -36,7 +36,7 @@ public class BaseModelImpl extends RootModelImpl implements BaseModel {
                 .addConverterFactory(GsonConverterFactory.create())
                 //增加RxJava支持
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .client(okHttpClient)
+                //.client(okHttpClient)
                 .build();
         DailyNewsRequestService dailyNewsRequestService = retrofit.create(DailyNewsRequestService.class);
         dailyNewsRequestService.getDailyNews(date)

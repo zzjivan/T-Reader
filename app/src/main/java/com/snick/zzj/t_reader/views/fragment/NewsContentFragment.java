@@ -25,6 +25,7 @@ import com.snick.zzj.t_reader.utils.SourceUrl;
 import com.snick.zzj.t_reader.R;
 import com.squareup.picasso.Picasso;
 import com.tencent.smtt.sdk.WebView;
+import com.tencent.smtt.sdk.WebViewClient;
 
 
 /**内容详情fragment
@@ -43,6 +44,14 @@ public class NewsContentFragment extends RealBaseFragment implements NewsContent
     private int discuss;
     private int zan;
 
+    private WebViewClient client = new WebViewClient() {
+        // 防止加载网页时调起系统浏览器
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            view.loadUrl(url);
+            return true;
+        }
+    };
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +69,7 @@ public class NewsContentFragment extends RealBaseFragment implements NewsContent
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.newscontentfragment, null);
         tbsContent = (WebView) view.findViewById(R.id.tbsContent);
+        tbsContent.setWebViewClient(client);
         headerImage = (ImageView) view.findViewById(R.id.headerImage);
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
 
