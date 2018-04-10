@@ -35,6 +35,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:descendantFocusability="blocksDescendants"
+        apps:layout_anchor="@id/anchor"
+        apps:layout_anchorGravity="bottom"
         apps:layout_behavior="com.snick.zzj.t_reader.Behavior.NewsContentBehavior">
         <com.tencent.smtt.sdk.WebView
             android:id="@+id/tbsContent"
