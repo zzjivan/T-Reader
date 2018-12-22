@@ -1,12 +1,11 @@
 package com.snick.zzj.t_reader.Behavior;
 
 import android.content.Context;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.snick.zzj.t_reader.R;
 
 /**

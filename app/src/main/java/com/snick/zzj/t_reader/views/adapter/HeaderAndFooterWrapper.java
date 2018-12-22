@@ -1,13 +1,9 @@
 package com.snick.zzj.t_reader.views.adapter;
 
-import android.support.v4.util.SparseArrayCompat;
-import android.support.v7.widget.RecyclerView;
+import androidx.collection.SparseArrayCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.snick.zzj.t_reader.R;
 
 /**
  * Created by zzj on 17-8-7.

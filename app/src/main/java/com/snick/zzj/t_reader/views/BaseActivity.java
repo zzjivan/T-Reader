@@ -1,6 +1,6 @@
 package com.snick.zzj.t_reader.views;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.snick.zzj.t_reader.AppApplication;
 import com.squareup.leakcanary.RefWatcher;

@@ -4,18 +4,14 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.AttributeSet;
-import android.support.v7.widget.AppCompatImageView;
-import android.util.Log;
-
-import com.snick.zzj.t_reader.R;
+import androidx.appcompat.widget.AppCompatImageView;
 
 /**
  * Created by zzj on 17-8-9.

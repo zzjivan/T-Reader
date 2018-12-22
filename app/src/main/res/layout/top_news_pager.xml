@@ -4,7 +4,7 @@
     android:layout_height="@dimen/top_news_header_height"
     android:id="@+id/top_container">
 
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/vp_top_news"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

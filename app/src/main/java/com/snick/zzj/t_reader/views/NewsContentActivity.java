@@ -1,9 +1,7 @@
 package com.snick.zzj.t_reader.views;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.util.Log;
-import android.view.MotionEvent;
+import androidx.annotation.Nullable;
 
 import com.snick.zzj.t_reader.R;
 import com.snick.zzj.t_reader.utils.SourceUrl;

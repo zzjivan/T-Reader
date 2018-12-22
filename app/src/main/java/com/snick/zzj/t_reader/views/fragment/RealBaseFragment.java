@@ -1,6 +1,6 @@
 package com.snick.zzj.t_reader.views.fragment;
 
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 import com.snick.zzj.t_reader.AppApplication;
 import com.squareup.leakcanary.RefWatcher;
