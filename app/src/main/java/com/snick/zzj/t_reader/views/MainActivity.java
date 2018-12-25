@@ -117,7 +117,8 @@ public class MainActivity extends BaseActivity
 
             if(homepageFragment.isAdded()) {
                 homepageFragment.refresh();
-                ft.hide(singleThemeFragment);
+                if (singleThemeFragment != null)
+                    ft.hide(singleThemeFragment);
                 ft.show(homepageFragment);
                 ft.commit();
             }
