@@ -3,17 +3,23 @@ package com.snick.zzj.t_reader.views.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.snick.zzj.t_reader.R;
@@ -22,6 +28,7 @@ import com.snick.zzj.t_reader.beans.Story;
 import com.snick.zzj.t_reader.presenter.BasePresenter;
 import com.snick.zzj.t_reader.presenter.impl.BasePresenterImpl;
 import com.snick.zzj.t_reader.utils.SourceUrl;
+import com.snick.zzj.t_reader.utils.StatusBarUtil;
 import com.snick.zzj.t_reader.views.NewsContentActivity;
 import com.squareup.picasso.Picasso;
 
@@ -58,26 +65,27 @@ public class BaseFragment extends RealBaseFragment implements BaseView {
         SimpleDateFormat dateFormat = new SimpleDateFormat(SourceUrl.DateFormat);
         date = String.valueOf(Integer.parseInt(dateFormat.format(System.currentTimeMillis())));
         basePresenter.refreshViews(SourceUrl.News, "latest");
+        StatusBarUtil.setStatusBar(getActivity(), false, false);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.base, container, false);
-        listView = (RecyclerView) view.findViewById(R.id.list);
+        listView = view.findViewById(R.id.list);
         listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                needLoadMore = isReachBottom(recyclerView);
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                needLoadMore = isReachBottom(recyclerView, newState);
                 //到达底部 && 已加载完成
                 //&& !LoadedDate.contains(date)
+                Log.d("zjzhu", needLoadMore+"---"+date+"---"+CachedNews.get(CachedNews.size()-1).getDate());
                 if(needLoadMore  && CachedNews.get(CachedNews.size()-1).getDate().equals(date)) {
-                    basePresenter.refreshViews(SourceUrl.oldNews, date);//api规则：获取5号的News，date则为6号，会+1
+                    loadMore();
                     needLoadMore = false;
-                    LoadedDate.add(date);
-                    date = String.valueOf(Integer.parseInt(date)-1);
                 }
-                super.onScrolled(recyclerView, dx, dy);
+                super.onScrollStateChanged(recyclerView, newState);
             }
         });
         return view;
@@ -85,6 +93,10 @@ public class BaseFragment extends RealBaseFragment implements BaseView {
 
     @Override
     public void refreshViews(DailyNews dailyNews) {
+        //获取latest新闻后，在获取一次上一天的内容
+        if (dailyNews.getTop_stories() != null)
+            loadMore();
+
         if(!CachedNews.contains(dailyNews)) {
             CachedNews.add(dailyNews);
         }
@@ -99,23 +111,48 @@ public class BaseFragment extends RealBaseFragment implements BaseView {
         }
     }
 
-    public void refresh() {
-        CachedNews.clear();
-        listAdapter = null;
-        basePresenter.refreshViews(SourceUrl.News, "latest");
+    private void loadMore() {
+        basePresenter.refreshViews(SourceUrl.oldNews, date);//api规则：获取5号的News，date则为6号，会+1
+        LoadedDate.add(date);
+        date = String.valueOf(Integer.parseInt(date)-1);
     }
 
-    private boolean isReachBottom(RecyclerView recyclerView) {
-        LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-        int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
-        int visibleItemCount = layoutManager.getChildCount();
-        int totalItemCount = layoutManager.getItemCount();
-        int scrollState = recyclerView.getScrollState();
-        if(visibleItemCount > 0 && lastVisibleItemPosition == totalItemCount - 1 &&
-                scrollState == recyclerView.SCROLL_STATE_SETTLING)
-            return true;
-        else
-            return false;
+    //找到数组中的最大值
+    private int findMax(int[] lastPositions) {
+        int max = lastPositions[0];
+        for (int value : lastPositions) {
+            if (value > max) {
+                max = value;
+            }
+        }
+        return max;
+    }
+
+    private boolean isReachBottom(RecyclerView recyclerView, int newState) {
+        //当前状态为停止滑动状态SCROLL_STATE_IDLE时
+        int lastPosition = 0;
+        if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+            RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+            if (layoutManager instanceof GridLayoutManager) {
+                //通过LayoutManager找到当前显示的最后的item的position
+                lastPosition = ((GridLayoutManager) layoutManager).findLastVisibleItemPosition();
+            } else if (layoutManager instanceof LinearLayoutManager) {
+                lastPosition = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
+            } else if (layoutManager instanceof StaggeredGridLayoutManager) {
+                //因为StaggeredGridLayoutManager的特殊性可能导致最后显示的item存在多个，所以这里取到的是一个数组
+                //得到这个数组后再取到数组中position值最大的那个就是最后显示的position值了
+                int[] lastPositions = new int[((StaggeredGridLayoutManager) layoutManager).getSpanCount()];
+                ((StaggeredGridLayoutManager) layoutManager).findLastVisibleItemPositions(lastPositions);
+                lastPosition = findMax(lastPositions);
+            }
+
+            //时判断界面显示的最后item的position是否等于itemCount总数-1也就是最后一个item的position
+            //如果相等则说明已经滑动到最后了
+            if (lastPosition == recyclerView.getLayoutManager().getItemCount() - 1) {
+                return true;
+            }
+        }
+        return false;
     }
 
     class ContentListAdapter extends RecyclerView.Adapter {
@@ -191,14 +228,18 @@ public class BaseFragment extends RealBaseFragment implements BaseView {
 
             if (holder instanceof NormalViewHolder) {
                 NormalViewHolder normalViewHolder = (NormalViewHolder) holder;
-                normalViewHolder.linearLayout.setTag(storyList.get(position).getId());
+                normalViewHolder.relativeLayout.setTag(storyList.get(position).getId());
                 normalViewHolder.textView.setText(storyList.get(position).getTitle());
+                normalViewHolder.summary.setText((storyList.get(position).getHint()));
                 Picasso.with(context).load(storyList.get(position).getImages().get(0)).into(normalViewHolder.imageView);
             } else if (holder instanceof FirstNewsViewHolder) {
                 FirstNewsViewHolder firstNewsViewHolder = (FirstNewsViewHolder) holder;
-                firstNewsViewHolder.linearLayout.setTag(storyList.get(position).getId());
+                firstNewsViewHolder.relativeLayout.setTag(storyList.get(position).getId());
                 firstNewsViewHolder.date.setText(dateFormat(dailyNews.getDate()));
                 firstNewsViewHolder.title.setText(storyList.get(position).getTitle());
+                firstNewsViewHolder.summary.setText(storyList.get(position).getHint());
+                if ("hide".equals(dateFormat((dailyNews.getDate()))))
+                    firstNewsViewHolder.ll_date.setVisibility(View.INVISIBLE);
                 Picasso.with(context).load(storyList.get(position).getImages().get(0)).into(firstNewsViewHolder.imageView);
             } else if (holder instanceof TopNewsViewHolder) {
                 final TopNewsViewHolder topNewsViewHolder = (TopNewsViewHolder) holder;
@@ -269,15 +310,19 @@ public class BaseFragment extends RealBaseFragment implements BaseView {
 
         class FirstNewsViewHolder extends RecyclerView.ViewHolder {
             private TextView date;
-            private LinearLayout linearLayout;
+            private RelativeLayout relativeLayout;
+            private LinearLayout ll_date;
+            private TextView summary;
             private TextView title;
             private ImageView imageView;
 
             public FirstNewsViewHolder(View itemView) {
                 super(itemView);
+                ll_date = itemView.findViewById(R.id.ll_date);
                 date = (TextView) itemView.findViewById(R.id.tv_date);
-                linearLayout = (LinearLayout) itemView.findViewById(R.id.base_swipe_item_container);
+                relativeLayout = itemView.findViewById(R.id.base_swipe_item_container);
                 title = (TextView) itemView.findViewById(R.id.base_swipe_item_title);
+                summary = itemView.findViewById(R.id.tv_summary);
                 imageView = (ImageView) itemView.findViewById(R.id.base_swipe_item_icon);
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -289,14 +334,16 @@ public class BaseFragment extends RealBaseFragment implements BaseView {
         }
 
         class NormalViewHolder extends RecyclerView.ViewHolder {
-            private LinearLayout linearLayout;
+            private RelativeLayout relativeLayout;
             private TextView textView;
+            private TextView summary;
             private ImageView imageView;
 
             public NormalViewHolder(View itemView) {
                 super(itemView);
-                linearLayout = (LinearLayout) itemView.findViewById(R.id.base_swipe_item_container);
+                relativeLayout = itemView.findViewById(R.id.base_swipe_item_container);
                 textView = (TextView) itemView.findViewById(R.id.base_swipe_item_title);
+                summary = itemView.findViewById(R.id.tv_summary);
                 imageView = (ImageView) itemView.findViewById(R.id.base_swipe_item_icon);
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -320,7 +367,7 @@ public class BaseFragment extends RealBaseFragment implements BaseView {
 
         @Override
         public int getCount() {
-            return dailyNews.getTop_stories().size();
+            return dailyNews != null && dailyNews.getTop_stories() != null ? dailyNews.getTop_stories().size() : 0;
         }
 
         @Override
@@ -369,43 +416,25 @@ public class BaseFragment extends RealBaseFragment implements BaseView {
 
     private String dateFormat(String date) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat yyyyFormat = new SimpleDateFormat("yyyy");
         if(simpleDateFormat.format(System.currentTimeMillis()).equals(date))
-            return getContext().getResources().getText(R.string.date_today).toString();
+            return "hide";
         else {
             int year = Integer.parseInt(date.substring(0,4));
-            int mounth = Integer.parseInt(date.substring(4,6));
+            int month = Integer.parseInt(date.substring(4,6));
             int day = Integer.parseInt(date.substring(6,8));
+            StringBuilder result = new StringBuilder();
             Calendar c = Calendar.getInstance();
             c.set(Calendar.YEAR, year);
-            c.set(Calendar.MONTH, mounth-1);
+            c.set(Calendar.MONTH, month-1);
             c.set(Calendar.DATE, day);
-            int week = c.get(Calendar.DAY_OF_WEEK);
-            String weekday = "";
-            switch (week) {
-                case 1:
-                    weekday = "天";
-                    break;
-                case 2:
-                    weekday = "一";
-                    break;
-                case 3:
-                    weekday = "二";
-                    break;
-                case 4:
-                    weekday = "三";
-                    break;
-                case 5:
-                    weekday = "四";
-                    break;
-                case 6:
-                    weekday = "五";
-                    break;
-                case 7:
-                    weekday = "六";
-                    break;
-                default:break;
-            }
-            return getContext().getResources().getString(R.string.date_detail, mounth, day, weekday);
+
+            if (!yyyyFormat.format(System.currentTimeMillis()).equals(String.valueOf(year)))
+                result.append(year).append("年");
+            result.append(month).append("月");
+            result.append(day).append("日");
+
+            return result.toString();
         }
     }
 }

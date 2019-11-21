@@ -6,13 +6,17 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.snick.zzj.t_reader.beans.NewsContent;
@@ -32,17 +36,21 @@ import com.tencent.smtt.sdk.WebViewClient;
  * Created by zzj on 17-2-24.
  */
 
-public class NewsContentFragment extends RealBaseFragment implements NewsContentView{
+public class NewsContentFragment extends RealBaseFragment implements NewsContentView , View.OnClickListener {
 
     private NewsContentPresenter newsContentPresenter;
     private NewsContentModel newsContentModel;
 
+    private LinearLayout anchor;
     private WebView tbsContent;
     private ImageView headerImage;
-    private Toolbar toolbar;
-
-    private int discuss;
-    private int zan;
+    private RelativeLayout rl_discuss_panel;
+    private RelativeLayout rl_thumb_panel;
+    private RelativeLayout rl_favourite_panel;
+    private RelativeLayout rl_share_panel;
+    private TextView tv_discuss;
+    private TextView tv_thumb;
+    private ImageButton ib_back;
 
     private WebViewClient client = new WebViewClient() {
         // 防止加载网页时调起系统浏览器
@@ -68,72 +76,27 @@ public class NewsContentFragment extends RealBaseFragment implements NewsContent
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.newscontentfragment, null);
-        tbsContent = (WebView) view.findViewById(R.id.tbsContent);
+        anchor = view.findViewById(R.id.anchor);
+        headerImage = view.findViewById(R.id.headerImage);
+        rl_discuss_panel = view.findViewById(R.id.rl_discuss_panel);
+        rl_favourite_panel = view.findViewById(R.id.rl_favourite_panel);
+        rl_share_panel = view.findViewById(R.id.rl_share_panel);
+        rl_thumb_panel = view.findViewById(R.id.rl_thumb_panel);
+        tv_discuss = view.findViewById(R.id.tv_discuss);
+        tv_thumb = view.findViewById(R.id.tv_thumb);
+        ib_back = view.findViewById(R.id.ib_back);
+        rl_discuss_panel.setOnClickListener(this);
+        rl_favourite_panel.setOnClickListener(this);
+        rl_share_panel.setOnClickListener(this);
+        rl_thumb_panel.setOnClickListener(this);
+        ib_back.setOnClickListener(this);
+
+        //动态添加WebView，避免内存泄漏。这里传入application context可能导致对话框弹出异常
+        tbsContent = new WebView(getActivity().getApplicationContext());
+        anchor.addView(tbsContent);
         tbsContent.setWebViewClient(client);
-        headerImage = (ImageView) view.findViewById(R.id.headerImage);
-        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
 
-        if (toolbar != null) {
-            ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-            if (null != actionBar) {
-                actionBar.setDisplayHomeAsUpEnabled(true);
-                actionBar.setTitle("");
-            }
-        }
         return view;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(final Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.newscontent, menu);
-        ((ImageView)menu.getItem(2).getActionView().findViewById(R.id.menu_item_icon))
-                .setImageResource(R.drawable.ic_message_black_24dp);
-        menu.getItem(2).getActionView().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onOptionsItemSelected(menu.getItem(2));
-            }
-        });
-        menu.getItem(3).getActionView().setPaddingRelative(0,0,36,0);
-        ((ImageView)menu.getItem(3).getActionView().findViewById(R.id.menu_item_icon))
-                .setImageResource(R.drawable.ic_thumb_up_black_24dp);
-        menu.getItem(3).getActionView().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onOptionsItemSelected(menu.getItem(3));
-            }
-        });
-        menu.getItem(3).getActionView().findViewById(R.id.menu_item_icon).setPaddingRelative(36,0,0,9);
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        ((TextView)menu.getItem(2).getActionView().findViewById(R.id.menu_item_title)).setText(String.valueOf(discuss));
-        ((TextView)menu.getItem(3).getActionView().findViewById(R.id.menu_item_title)).setText(String.valueOf(zan));
-        super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                getActivity().onBackPressed();
-                break;
-            case R.id.action_share:
-                break;
-            case R.id.action_favourite:
-                break;
-            case R.id.action_discuss:
-                break;
-            case R.id.action_zan:
-                zan++;
-                getActivity().invalidateOptionsMenu();
-                break;
-            default:break;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -149,8 +112,35 @@ public class NewsContentFragment extends RealBaseFragment implements NewsContent
     @Override
     public void onNewsExtraInfoLoaded(NewsExtraInfo info) {
         //刷新menu中的数据
-        discuss = info.getComments();
-        zan = info.getPopularity();
+        tv_discuss.setText(String.valueOf(info.getComments()));
+        tv_thumb.setText(String.valueOf(info.getPopularity()));
         getActivity().invalidateOptionsMenu();
+    }
+
+    @Override
+    public void onDestroy() {
+        anchor.removeView(tbsContent);
+        tbsContent.destroy();
+        tbsContent = null;
+        super.onDestroy();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.ib_back:
+                getActivity().finish();
+                break;
+            case R.id.rl_discuss_panel:
+                break;
+            case R.id.rl_favourite_panel:
+                break;
+            case R.id.rl_share_panel:
+                break;
+            case R.id.rl_thumb_panel:
+                break;
+             default:
+                break;
+        }
     }
 }
