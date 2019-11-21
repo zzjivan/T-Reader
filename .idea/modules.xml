@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/StudioProjects-T-Reader.iml" filepath="$PROJECT_DIR$/StudioProjects-T-Reader.iml" />
       <module fileurl="file://$PROJECT_DIR$/T-Reader.iml" filepath="$PROJECT_DIR$/T-Reader.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/T-Reader-app.iml" filepath="$PROJECT_DIR$/app/T-Reader-app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
