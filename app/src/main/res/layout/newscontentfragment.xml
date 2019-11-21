@@ -25,11 +25,6 @@
                 android:background="@color/colorPrimary"
                 android:contentDescription="header"
                 android:scaleType="centerCrop" />
-
-<!--            <com.tencent.smtt.sdk.WebView-->
-<!--                android:id="@+id/tbsContent"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent" />-->
         </LinearLayout>
     </ScrollView>
 
@@ -37,7 +32,7 @@
         android:id="@+id/ll_bottom_panel"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@android:color/transparent"
+        android:background="@color/bg_white"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
 
@@ -54,11 +49,12 @@
             android:layout_width="1dp"
             android:layout_height="30dp"
             android:layout_gravity="center_vertical"
-            android:background="#999999"/>
+            android:background="@color/divider_color"/>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/bg_white">
             <RelativeLayout
                 android:id="@+id/rl_discuss_panel"
                 android:layout_width="0dp"
@@ -76,7 +72,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignTop="@+id/ib_discuss"
                     android:layout_toEndOf="@+id/ib_discuss"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_color_0"
                     android:textSize="12sp"
                     android:text="25"/>
             </RelativeLayout>
@@ -97,7 +93,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignTop="@+id/ib_thumb"
                     android:layout_toEndOf="@+id/ib_thumb"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/text_color_0"
                     android:textSize="12sp"
                     android:text="287"/>
             </RelativeLayout>

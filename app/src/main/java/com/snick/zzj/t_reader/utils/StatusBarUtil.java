@@ -167,7 +167,7 @@ public class StatusBarUtil {
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
             decorView.setSystemUiVisibility(option);
             if (useThemestatusBarColor) {
-                activity.getWindow().setStatusBarColor(activity.getResources().getColor(R.color.white));
+                activity.getWindow().setStatusBarColor(activity.getResources().getColor(R.color.bg_white));
             } else {
                 activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
             }

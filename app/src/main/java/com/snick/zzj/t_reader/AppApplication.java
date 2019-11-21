@@ -6,11 +6,16 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.appcompat.app.AppCompatDelegate;
+
 import com.snick.zzj.t_reader.utils.Constants;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 import com.tencent.smtt.sdk.QbSdk;
 import com.tencent.smtt.sdk.TbsDownloader;
+
+import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO;
+import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES;
 
 /**
  * Created by zzj on 17-8-30.
@@ -64,9 +69,18 @@ public class AppApplication extends Application implements Application.ActivityL
             // You should not init your app in this process.
             return;
         }
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
         mRefWatcher = LeakCanary.install(this);
-
         this.registerActivityLifecycleCallbacks(this);
+    }
+
+    public static void changeTheme() {
+        int mode = AppCompatDelegate.getDefaultNightMode();
+        if (mode == AppCompatDelegate.MODE_NIGHT_YES)
+            mode = MODE_NIGHT_NO;
+        else
+            mode = MODE_NIGHT_YES;
+        AppCompatDelegate.setDefaultNightMode(mode);
     }
 
     public static RefWatcher getRefWatcher(Context context) {

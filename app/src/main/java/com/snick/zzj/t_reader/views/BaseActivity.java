@@ -6,6 +6,7 @@ import android.os.PersistableBundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.snick.zzj.t_reader.ActivityManager;
 import com.snick.zzj.t_reader.AppApplication;
 import com.snick.zzj.t_reader.utils.StatusBarUtil;
 import com.squareup.leakcanary.RefWatcher;
@@ -20,6 +21,18 @@ public class BaseActivity extends AppCompatActivity {
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, persistentState);
         StatusBarUtil.setStatusBar(this, false, false);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityManager.getInstance().add(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ActivityManager.getInstance().remove(this);
     }
 
     @Override
