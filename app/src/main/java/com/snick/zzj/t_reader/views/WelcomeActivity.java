@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.snick.zzj.t_reader.R;
 import com.snick.zzj.t_reader.beans.WelcomeImage;
 import com.snick.zzj.t_reader.utils.SourceUrl;
+import com.snick.zzj.t_reader.utils.StatusBarUtil;
 
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -45,6 +46,7 @@ public class WelcomeActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        StatusBarUtil.setStatusBar(this, false, false);
         showWelcomeImage();
         handler = new Handler();
         handler.postDelayed(new Runnable(){

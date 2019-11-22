@@ -1,5 +1,6 @@
 package com.snick.zzj.t_reader.views.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.snick.zzj.t_reader.AppApplication;
 import com.snick.zzj.t_reader.R;
 import com.snick.zzj.t_reader.beans.DailyNews;
 import com.snick.zzj.t_reader.beans.Story;
@@ -38,6 +40,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import me.relex.circleindicator.CircleIndicator;
+
+import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO;
 
 
 /**
@@ -65,7 +69,16 @@ public class BaseFragment extends RealBaseFragment implements BaseView {
         SimpleDateFormat dateFormat = new SimpleDateFormat(SourceUrl.DateFormat);
         date = String.valueOf(Integer.parseInt(dateFormat.format(System.currentTimeMillis())));
         basePresenter.refreshViews(SourceUrl.News, "latest");
-        StatusBarUtil.setStatusBar(getActivity(), false, false);
+
+        //不同的界面statusbar的处理方式不一样
+        Activity activity = getActivity();
+        int nightMode = ((AppApplication)activity.getApplication()).getDayNightMode();
+        if (nightMode == MODE_NIGHT_NO) {
+            StatusBarUtil.setStatusBar(getActivity(), false, false);
+        } else {
+            StatusBarUtil.setStatusBar(getActivity(), true, true);
+        }
+
     }
 
     @Nullable

@@ -3,6 +3,7 @@ package com.snick.zzj.t_reader;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -12,7 +13,6 @@ import com.snick.zzj.t_reader.utils.Constants;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 import com.tencent.smtt.sdk.QbSdk;
-import com.tencent.smtt.sdk.TbsDownloader;
 
 import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO;
 import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES;
@@ -25,6 +25,7 @@ public class AppApplication extends Application implements Application.ActivityL
     private static Context context;
     public static int appState = 0;
     private RefWatcher mRefWatcher;
+    private SharedPreferences sharedPreferences;
 
     /**
      * 初始化TBS浏览服务X5内核,避免初次加载白屏
@@ -69,18 +70,26 @@ public class AppApplication extends Application implements Application.ActivityL
             // You should not init your app in this process.
             return;
         }
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
+        if (sharedPreferences == null) {
+            sharedPreferences = getSharedPreferences("com.snick.zzj.t_reader", MODE_PRIVATE);
+        }
+        AppCompatDelegate.setDefaultNightMode(getDayNightMode());
         mRefWatcher = LeakCanary.install(this);
         this.registerActivityLifecycleCallbacks(this);
     }
 
-    public static void changeTheme() {
+    public void changeTheme() {
         int mode = AppCompatDelegate.getDefaultNightMode();
         if (mode == AppCompatDelegate.MODE_NIGHT_YES)
             mode = MODE_NIGHT_NO;
         else
             mode = MODE_NIGHT_YES;
+        sharedPreferences.edit().putInt("day_night", mode).commit();
         AppCompatDelegate.setDefaultNightMode(mode);
+    }
+
+    public int getDayNightMode() {
+        return sharedPreferences.getInt("day_night", -1);
     }
 
     public static RefWatcher getRefWatcher(Context context) {

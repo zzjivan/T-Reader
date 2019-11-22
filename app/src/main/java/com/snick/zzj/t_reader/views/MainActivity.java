@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-
 import com.snick.zzj.t_reader.ActivityManager;
 import com.snick.zzj.t_reader.AppApplication;
 import com.snick.zzj.t_reader.R;
@@ -33,10 +32,11 @@ public class MainActivity extends BaseActivity {
         iv_user_logo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppApplication.changeTheme();
+                ((AppApplication)getApplication()).changeTheme();
                 List<BaseActivity> list= ActivityManager.getInstance().getAllActivity();
-                for (BaseActivity activity : list)
+                for (BaseActivity activity : list) {
                     activity.recreate();
+                }
             }
         });
     }

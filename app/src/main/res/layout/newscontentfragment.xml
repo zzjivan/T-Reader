@@ -25,6 +25,8 @@
                 android:background="@color/colorPrimary"
                 android:contentDescription="header"
                 android:scaleType="centerCrop" />
+
+            <!-- 动态添加WebView -->
         </LinearLayout>
     </ScrollView>
 

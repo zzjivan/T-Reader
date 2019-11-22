@@ -20,7 +20,6 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, persistentState);
-        StatusBarUtil.setStatusBar(this, false, false);
     }
 
     @Override

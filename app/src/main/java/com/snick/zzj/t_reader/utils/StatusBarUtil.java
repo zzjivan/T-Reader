@@ -9,9 +9,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import androidx.annotation.RequiresApi;
-import androidx.fragment.app.Fragment;
 import com.snick.zzj.t_reader.R;
 
 import java.lang.reflect.Field;
@@ -153,8 +151,13 @@ public class StatusBarUtil {
     }
 
 
-    public static void setStatusBar(Activity activity, boolean useThemestatusBarColor,
-                                    boolean withoutUseStatusBarColor){
+    /**
+     *
+     * @param activity
+     * @param useThemestatusBarColor 状态栏背景色是否透明：false-透明，true-theme的颜色
+     * @param withoutUseStatusBarColor 状态栏图标颜色：false-黑色，true-白色
+     */
+    public static void setStatusBar(Activity activity, boolean useThemestatusBarColor, boolean withoutUseStatusBarColor){
         //vivo oppo在5.1-6.0版本的状态栏上字体无法反色（设置为黑色），显示一个灰色透明背景
         if ("vivo".equals(android.os.Build.BRAND) || "oppo".equals(android.os.Build.BRAND)) {
             Window window = activity.getWindow();

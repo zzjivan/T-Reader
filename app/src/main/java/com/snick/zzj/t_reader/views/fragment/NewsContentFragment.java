@@ -17,8 +17,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.snick.zzj.t_reader.AppApplication;
 import com.snick.zzj.t_reader.beans.NewsContent;
 import com.snick.zzj.t_reader.beans.NewsExtraInfo;
 import com.snick.zzj.t_reader.model.NewsContentModel;
@@ -27,9 +29,12 @@ import com.snick.zzj.t_reader.presenter.NewsContentPresenter;
 import com.snick.zzj.t_reader.presenter.impl.NewsContentPresenterImpl;
 import com.snick.zzj.t_reader.utils.SourceUrl;
 import com.snick.zzj.t_reader.R;
+import com.snick.zzj.t_reader.utils.StatusBarUtil;
 import com.squareup.picasso.Picasso;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
+
+import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO;
 
 
 /**内容详情fragment
@@ -51,6 +56,7 @@ public class NewsContentFragment extends RealBaseFragment implements NewsContent
     private TextView tv_discuss;
     private TextView tv_thumb;
     private ImageButton ib_back;
+    private ScrollView scrollview;
 
     private WebViewClient client = new WebViewClient() {
         // 防止加载网页时调起系统浏览器
@@ -76,6 +82,7 @@ public class NewsContentFragment extends RealBaseFragment implements NewsContent
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.newscontentfragment, null);
+        scrollview = view.findViewById(R.id.scrollview);
         anchor = view.findViewById(R.id.anchor);
         headerImage = view.findViewById(R.id.headerImage);
         rl_discuss_panel = view.findViewById(R.id.rl_discuss_panel);
@@ -95,6 +102,20 @@ public class NewsContentFragment extends RealBaseFragment implements NewsContent
         tbsContent = new WebView(getActivity().getApplicationContext());
         anchor.addView(tbsContent);
         tbsContent.setWebViewClient(client);
+
+        scrollview.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (scrollY >= headerImage.getMeasuredHeight()) {
+                    if (((AppApplication)getActivity().getApplication()).getDayNightMode() == MODE_NIGHT_NO)
+                        StatusBarUtil.setStatusBar(getActivity(), true, false);
+                    else
+                        StatusBarUtil.setStatusBar(getActivity(), true, true);
+                } else {
+                    StatusBarUtil.setStatusBar(getActivity(), false, false);
+                }
+            }
+        });
 
         return view;
     }
